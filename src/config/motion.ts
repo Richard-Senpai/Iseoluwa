@@ -1,5 +1,5 @@
 /**
- * Motion tokens from iseoluwa-design-system.md (Section 6.8 & Section 12).
+ * Motion tokens from iseoluwa-design-system.md & iseoluwa-work-page-prompt.md.
  * Never hard-code eases, durations, or surface transition colours in components.
  */
 export const MOTION = {
@@ -14,6 +14,8 @@ export const MOTION = {
     reveal: 0.95,
     pageTransition: 0.7,
     themeReveal: 0.55,
+    zoomTransition: 0.95,
+    swiperSnap: 0.65,
   },
   stagger: {
     lines: 0.08,
@@ -28,6 +30,16 @@ export const MOTION = {
     outgoingScaleMobile: 0.97,
     outgoingOverlayOpacity: 0.45,
     innerParallaxPercent: 10,
+  },
+  swiper: {
+    neighborScale: 0.88,
+    neighborOpacity: 0.42,
+    neighborRotateDeg: 2.5,
+    maxVelocityTiltDeg: 3,
+    maxVelocitySkewDeg: 2,
+    rubberBandFactor: 0.28,
+    lineSpeedRatio: 0.6,
+    flickVelocityThreshold: 280,
   },
   flowingLine: {
     defaultAmplitude: 22,

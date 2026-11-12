@@ -7,17 +7,23 @@ export type AnalyticsEventName =
   | 'matcher_button_click'
   | 'newsletter_submit'
   | 'email_copied'
-  | 'faq_opened';
+  | 'faq_opened'
+  | 'work_panel_changed'
+  | 'work_category_entered'
+  | 'work_index_opened'
+  | 'work_project_opened'
+  | 'work_next_category_clicked'
+  | 'work_next_project_clicked'
+  | 'work_cta_clicked';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 
 /**
  * Typed analytics dispatcher ready for Vercel Analytics / PostHog integration.
- * No-op in Phase 1 & 2 per specification.
+ * No-op in Phase 1–3 per specification.
  */
 export function track(eventName: AnalyticsEventName, props?: AnalyticsEventProps): void {
   if (process.env.NODE_ENV === 'development') {
-    // Kept silent in production; available for inspection or test spies
     void eventName;
     void props;
   }

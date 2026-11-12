@@ -9,7 +9,7 @@ This document summarizes the folder structure, technology layers, font and icon 
 | Layer | Responsibility | Tools |
 |---|---|---|
 | **1. Page & Content** | Structure, copy, SEO, routing, forms | Next.js (App Router), TypeScript (strict), Tailwind CSS + CSS variable tokens |
-| **2. Motion** | Smooth scroll, scroll-driven reveals, project stack, flowing line, surface transitions, page transitions, custom cursor | GSAP (`ScrollTrigger`, `SplitText`, `DrawSVGPlugin`), `@gsap/react` (`useGSAP`), Lenis |
+| **2. Motion** | Smooth scroll, scroll-driven reveals, project stack, flowing line, surface transitions, page transitions, custom cursor, category swiper, shared-element zoom | GSAP (`ScrollTrigger`, `SplitText`, `DrawSVGPlugin`, `Flip`, `Draggable`, `InertiaPlugin`), `@gsap/react` (`useGSAP`), Lenis |
 | **3. Selective WebGL (Phase 3)** | Optional lazy-loaded hover distortion on a single shared canvas | React Three Fiber, drei, custom GLSL (deferred until Phase 3) |
 
 ---
@@ -21,48 +21,69 @@ src/
 ├── app/                              # Thin route files & metadata only
 │   ├── layout.tsx                    # Fonts, theme, smooth scroll, page transitions, header, footer
 │   ├── page.tsx                      # Home route: composes sections from features/home
-│   ├── (marketing)/                  # Stubs & inner pages: /services, /work, /about, /faq, /contact
+│   ├── (marketing)/
+│   │   ├── work/
+│   │   │   ├── layout.tsx            # Persistent ZoomTransition overlay across /work routes
+│   │   │   ├── page.tsx              # Stage 1: Full-screen CategorySwiper (/work)
+│   │   │   └── [category]/
+│   │   │       ├── page.tsx          # Stage 2: Category project scroll (/work/[category])
+│   │   │       └── [slug]/
+│   │   │           └── page.tsx      # Stage 3: Case study template (/work/[category]/[slug])
+│   │   ├── services/page.tsx
+│   │   ├── about/page.tsx
+│   │   ├── faq/page.tsx
+│   │   └── contact/page.tsx
 │   ├── api/
 │   │   ├── newsletter/route.ts       # Newsletter subscription endpoint (Zod + honeypot)
 │   │   └── contact/route.ts          # Contact form endpoint (Phase 3)
-│   ├── sitemap.ts
+│   ├── sitemap.ts                    # Includes main routes, 3 work categories, and 12 projects
 │   └── robots.ts
 ├── components/
 │   ├── ui/                           # Button, Icon, Container, Heading, Label, Tag, Accordion
-│   ├── layout/                       # Header, MenuOverlay, Footer, SloganBand, Wordmark, ThemeToggle
+│   ├── layout/                       # Header, MenuOverlay, Footer, ConditionalFooter, SloganBand, Wordmark, ThemeToggle
 │   ├── motion/                       # SmoothScroll, Reveal, SplitReveal, ScrollText, StrikeList,
 │   │                                 # FlowingLine, ProjectStack, SurfaceTransition, FooterReveal,
-│   │                                 # PageTransition, TransitionLink, Cursor, Parallax, ThemeReveal
+│   │                                 # PageTransition, TransitionLink, Cursor, Parallax, ThemeReveal,
+│   │                                 # CategorySwiper, ZoomTransition
 │   └── media/                        # Media (next/image wrapper), LoopVideo, VideoPlayer
 ├── features/
-│   └── home/
-│       ├── sections/                 # Hero, Statement, SoundFamiliar, WhatWeDo, SelectedWork,
-│       │                             # WhyIseoluwa, HowItWorks, Packages, FaqTeaser,
-│       │                             # Testimonials, ClosingCta
-│       ├── home.content.ts           # All Home copy, problem list, process steps, FAQs, matcher logic
-│       └── index.ts                  # Exports Home sections in display order
+│   ├── home/
+│   │   ├── sections/                 # Hero, Statement, SoundFamiliar, WhatWeDo, SelectedWork,
+│   │   │                             # WhyIseoluwa, HowItWorks, Packages, FaqTeaser,
+│   │   │                             # Testimonials, ClosingCta
+│   │   ├── home.content.ts           # All Home copy, problem list, process steps, FAQs, matcher logic
+│   │   └── index.ts                  # Exports Home sections in display order
+│   └── work/
+│       ├── components/               # CategoryPanel, CategoryView, CaseStudyView,
+│       │                             # ProjectIndexOverlay, NextCategoryBanner, WorkClosingCta
+│       ├── work.content.ts           # All Work copy, labels, and section headings
+│       └── index.ts                  # Exports Work components and content
 ├── content/
 │   ├── site.ts                       # Studio name, tagline, slogan, contact placeholders, socials
 │   ├── navigation.ts                 # Header & menu links, footer columns
 │   ├── packages.ts                   # Packages, USD/NGN pricing, and "Find your fit" matcher rules
-│   └── projects.ts                   # Selected work placeholder items (swappable for real media/Sanity)
+│   └── projects.ts                   # Single source of truth for 3 categories and 12 projects
 ├── lib/
 │   ├── animation/gsap.ts             # Single registration point for GSAP + plugins
 │   ├── analytics.ts                  # Typed track(eventName, props?) helper
 │   ├── fonts.ts                      # IBM Plex Mono (next/font/google) + Aeonik (next/font/local)
-│   ├── seo.ts                        # Metadata & Organization JSON-LD helpers
-│   └── utils.ts                      # Class merging and currency formatting helpers
+│   ├── seo.ts                        # Metadata, Organization JSON-LD, & BreadcrumbList JSON-LD
+│   └── utils.ts                      # Class merging helpers
 ├── hooks/                            # useMotionPreference, useMediaQuery, useScrollVelocity
-├── store/                            # Zustand stores (cursor, menu, transition, currency)
-├── config/                           # motion.ts (eases, durations, surface colours), breakpoints.ts
+├── store/
+│   ├── ui.store.ts                   # Cursor, menu, velocity, currency, footer dark zone
+│   └── zoom.ts                       # Shared-element ZoomTransition origin rects & active request
+├── config/                           # motion.ts (eases, durations, swiper/zoom tokens), breakpoints.ts
 ├── styles/
 │   ├── tokens.css                    # Light & dark CSS variables, green accents, --line-accent
 │   └── globals.css                   # Tailwind layers & fluid typography classes
 ├── assets/
 │   ├── fonts/                        # Licensed Aeonik WOFF2 files (see instructions below)
 │   └── icons/                        # Material Symbols (outlined, weight 300) SVGs
-├── types/                            # Shared TypeScript interfaces
-└── tests/                            # Vitest unit tests & Playwright e2e smoke tests
+├── types/
+│   ├── global.d.ts
+│   └── work.ts                       # WorkCategory, ProjectItem, ProjectMediaSlot interfaces
+└── tests/                            # Vitest unit tests & Playwright e2e tests
 ```
 
 ---
@@ -73,15 +94,17 @@ All motion components use `useGSAP` with a scoped ref, import GSAP exclusively f
 
 - **`SmoothScroll`**: Single Lenis instance connected to `ScrollTrigger.update` and driven by `gsap.ticker`.
 - **`Reveal`**: Fades and lifts content (`transform`, `opacity`) as it enters the viewport.
-- **`SplitReveal`**: Line-by-line masked headline reveal using `SplitText` (with clean line wrapper fallback).
-- **`ScrollText`**: Word-by-word scroll-scrubbed opacity reveal (`0.2` to `1`) for editorial statements.
+- **`SplitReveal`**: Line-by-line masked headline reveal using `SplitText`.
+- **`ScrollText`**: Word-by-word scroll-scrubbed opacity reveal (`0.2` to `1`) for editorial statements and case study overviews.
 - **`StrikeList`**: Problem statements that are progressively crossed out by an animated SVG line (`DrawSVG`) and dimmed as each row passes the viewport center.
 - **`FlowingLine`**: Interactive sine-wave SVG path that draws on scroll (`DrawSVG`), drifts gently via `gsap.ticker` when visible (`IntersectionObserver`), increases amplitude with scroll velocity, bends toward the pointer on desktop, and propagates a wave ripple on click/tap.
-- **`ProjectStack`**: Pinned scroll-driven project showcase where incoming cards slide over outgoing cards (which scale to `0.94`, darken, and parallax), with inner media clip-path reveal and `01 / 03` counter updates.
-- **`SurfaceTransition`**: Scroll-scrubbed interpolation of `--bg`, `--ink`, `--ink-muted`, `--line`, and `--line-accent` over the final stretch of the closing CTA into the footer (`#FFFFFF` → `#0A0A0A` in light mode; `#0A0A0A` → `#06150E` deep green tint in dark mode).
+- **`ProjectStack`**: Generalised scroll-driven project showcase where incoming cards slide over outgoing cards (which scale to `0.94`, darken, and parallax), with inner media clip-path reveal, `01 / 04` counter updates, optional edge scroll-progress bar, and zoom trigger into case studies.
+- **`CategorySwiper`**: Full-screen (`100dvh`) draggable carousel (`Draggable` + velocity snapping) with rubber-band edge resistance, multi-layer depth parallax, drag-velocity tilt, background surface interpolation (`Branding` light → `Websites` black → `Marketing` light), and a continuous `FlowingLine` moving at 60% of drag speed.
+- **`ZoomTransition`**: Persistent GSAP `Flip` shared-element transition mounted in `app/(marketing)/work/layout.tsx`, expanding a category or project preview frame to fill the viewport on enter and shrinking back to its stored origin on Back (with crossfade fallback for deep links or reduced motion).
+- **`SurfaceTransition`**: Scroll-scrubbed interpolation of `--bg`, `--ink`, `--ink-muted`, `--line`, and `--line-accent` over the final stretch of the closing CTA into the footer.
 - **`FooterReveal`**: Curtain-style reveal of the footer beneath the closing section on viewports tall enough to fit the footer, gracefully falling back to normal document flow on short screens.
 - **`PageTransition` & `TransitionLink`**: 700ms black wipe panel with mono page title between internal routes, resetting scroll and moving focus to the new page `h1`.
-- **`Cursor`**: Desktop-only `gsap.quickTo` follower dot that expands into a labeled ring (`View`, `Talk`, `Play`, `Drag`) over `[data-cursor]` targets.
+- **`Cursor`**: Desktop-only `gsap.quickTo` follower dot that expands into a labeled ring (`View`, `Talk`, `Play`, `Drag`, `Enter`) over interactive targets.
 - **`Parallax`**: Inner-parallax media wrapper translating media inside overflow-clipped frames.
 - **`ThemeReveal`**: Circular clip-path reveal originating from the theme toggle button via the View Transitions API.
 
@@ -96,7 +119,7 @@ To enable Aeonik in production:
    - `src/assets/fonts/Aeonik-Light.woff2` (weight `300`, optional)
    - `src/assets/fonts/Aeonik-Regular.woff2` (weight `400`)
    - `src/assets/fonts/Aeonik-Medium.woff2` (weight `500`)
-2. In `src/lib/fonts.ts`, uncomment the `localFont` block for `aeonik` and pass `aeonik.variable` alongside `ibmPlexMono.variable` in `getFontVariables()`. Nothing else in the codebase needs to change.
+2. In `src/lib/fonts.ts`, uncomment the `localFont` block for `aeonik` and pass `aeonik.variable` alongside `ibmPlexMono.variable` in `getFontVariables()`.
 
 ---
 

@@ -10,8 +10,7 @@ import { PageTransition } from '@/components/motion/PageTransition';
 import { Cursor } from '@/components/motion/Cursor';
 import { Header } from '@/components/layout/Header';
 import { MenuOverlay } from '@/components/layout/MenuOverlay';
-import { Footer } from '@/components/layout/Footer';
-import { FooterReveal } from '@/components/motion/FooterReveal';
+import { ConditionalFooter } from '@/components/layout/ConditionalFooter';
 
 export const metadata: Metadata = buildMetadata();
 
@@ -56,9 +55,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               <main id="main-content" className="relative z-10 bg-bg">
                 {children}
               </main>
-              <FooterReveal>
-                <Footer />
-              </FooterReveal>
+              <ConditionalFooter />
             </PageTransition>
           </SmoothScroll>
         </ThemeReveal>
