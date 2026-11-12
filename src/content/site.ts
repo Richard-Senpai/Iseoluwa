@@ -113,8 +113,7 @@ export const SITE_CONTENT: SiteContent = {
     roles: ['Software Engineer', 'Full-Stack Developer', 'Product Designer', 'Brand Manager'],
     // TODO: Replace `[Base city, country]` with founder's base location
     base: '[Base city, country]',
-    // TODO: Replace `https://your-portfolio-link` with founder's personal portfolio URL
-    portfolioUrl: 'https://your-portfolio-link',
+    portfolioUrl: 'http://senpaididit.vercel.app/',
     // TODO: Replace with founder's direct email if different from studio email
     email: 'hello@iseoluwa.com',
     // TODO: Replace `[add number]` with founder's direct WhatsApp number

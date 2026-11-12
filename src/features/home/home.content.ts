@@ -5,6 +5,7 @@ export interface ServiceRowItem {
   description: string;
   tags: string[];
   previewLabel: string;
+  previewSrc?: string;
 }
 
 export interface WhyReasonItem {
@@ -152,6 +153,7 @@ export const HOME_CONTENT: HomeContent = {
           'Strategy, logo, and a complete visual identity that people remember and trust.',
         tags: ['STRATEGY', 'IDENTITY', 'GUIDELINES'],
         previewLabel: 'BRAND PREVIEW 4:5',
+        previewSrc: '/images/work/branding/branding-01.png',
       },
       {
         number: '02',

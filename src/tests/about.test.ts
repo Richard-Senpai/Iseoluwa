@@ -15,7 +15,7 @@ describe('About content & founder profile', () => {
       'Product Designer',
       'Brand Manager',
     ]);
-    expect(SITE_CONTENT.founder.portfolioUrl).toBe('https://your-portfolio-link');
+    expect(SITE_CONTENT.founder.portfolioUrl).toBe('http://senpaididit.vercel.app/');
     expect(SITE_CONTENT.founder.email).toBe('hello@iseoluwa.com');
   });
 

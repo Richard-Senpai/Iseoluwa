@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/Label';
 import { TagList } from '@/components/ui/Tag';
 import { Icon } from '@/components/ui/Icon';
 import { Media } from '@/components/media/Media';
-import type { WorkCategory } from '@/content/projects';
+import { getProjectsByCategory, type WorkCategory } from '@/content/projects';
 import { WORK_CONTENT } from '@/features/work/work.content';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
 import { useZoomStore } from '@/store/zoom';
@@ -33,6 +33,7 @@ export function NextCategoryBanner({
   const { stage2 } = WORK_CONTENT;
 
   const targetHref = `/work/${nextCategory.slug}`;
+  const firstNextProject = getProjectsByCategory(nextCategory.slug)[0];
 
   const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     track('work_next_category_clicked', {
@@ -105,7 +106,8 @@ export function NextCategoryBanner({
             className="overflow-hidden rounded-card lg:col-span-6"
           >
             <Media
-              type="placeholder"
+              type={firstNextProject?.media.type === 'image' ? 'image' : 'placeholder'}
+              src={firstNextProject?.media.src}
               alt={`${nextCategory.title} category preview`}
               label={`${nextCategory.title.toUpperCase()} · PROJECT MEDIA 16:9`}
               aspectRatio="16/9"

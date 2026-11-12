@@ -90,9 +90,8 @@ export const ABOUT_CONTENT = {
     cursorLabel: 'Hello',
     portrait: {
       placeholderLabel: 'FOUNDER PORTRAIT 4:5',
-      // TODO: Art direction note for founder portrait: natural light, plain neutral background, mid-shot, relaxed and confident.
-      // Add up to 3 image paths below (`images: ['/images/founder-1.avif', ...]`) or `videoSrc` for a short silent LoopVideo.
-      images: [] as string[],
+      // Founder portrait (additional chapter portraits can be appended as they are provided)
+      images: ['/images/founder/founder-portrait.png'] as string[],
       videoSrc: undefined as string | undefined,
       videoPoster: undefined as string | undefined,
     },

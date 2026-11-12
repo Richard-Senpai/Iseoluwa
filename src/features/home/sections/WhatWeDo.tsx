@@ -68,7 +68,8 @@ export function WhatWeDo() {
         >
           {activePreviewService && (
             <Media
-              type="placeholder"
+              type={activePreviewService.previewSrc ? 'image' : 'placeholder'}
+              src={activePreviewService.previewSrc}
               alt={activePreviewService.title}
               label={activePreviewService.previewLabel}
               aspectRatio="4/5"

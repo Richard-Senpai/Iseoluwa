@@ -141,7 +141,8 @@ export function CategoryPanel({
               className="pointer-events-none absolute top-3 left-2 w-[56%] -rotate-3 opacity-60 transition-transform duration-500 will-change-transform md:left-6"
             >
               <Media
-                type="placeholder"
+                type={previewProjects[2].media.type === 'image' ? 'image' : 'placeholder'}
+                src={previewProjects[2].media.src}
                 alt={previewProjects[2].media.alt}
                 label={previewProjects[2].title}
                 aspectRatio="16/9"
@@ -157,7 +158,8 @@ export function CategoryPanel({
               className="pointer-events-none absolute top-2 right-2 w-[56%] rotate-3 opacity-75 transition-transform duration-500 will-change-transform md:right-6"
             >
               <Media
-                type="placeholder"
+                type={previewProjects[1].media.type === 'image' ? 'image' : 'placeholder'}
+                src={previewProjects[1].media.src}
                 alt={previewProjects[1].media.alt}
                 label={previewProjects[1].title}
                 aspectRatio="16/9"
@@ -174,7 +176,8 @@ export function CategoryPanel({
               className="relative z-10 mx-auto w-[68%] transition-transform duration-500 will-change-transform md:w-[62%]"
             >
               <Media
-                type="placeholder"
+                type={previewProjects[0].media.type === 'image' ? 'image' : 'placeholder'}
+                src={previewProjects[0].media.src}
                 alt={previewProjects[0].media.alt}
                 label={`${category.title.toUpperCase()} · ${previewProjects[0].media.label}`}
                 aspectRatio="16/9"

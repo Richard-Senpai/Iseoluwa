@@ -29,7 +29,7 @@ test.describe('About Page (/about) & Thick FlowingLine Ribbon', () => {
     // 4. Verify Reach me buttons exist with the correct hrefs
     const portfolioLink = page.getByTestId('founder-portfolio-link');
     await expect(portfolioLink).toBeVisible();
-    await expect(portfolioLink).toHaveAttribute('href', 'https://your-portfolio-link');
+    await expect(portfolioLink).toHaveAttribute('href', 'http://senpaididit.vercel.app/');
     await expect(portfolioLink).toHaveAttribute('target', '_blank');
 
     const emailLink = page.getByTestId('founder-email-link');

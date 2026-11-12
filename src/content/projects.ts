@@ -44,6 +44,13 @@ export const WORK_CATEGORIES: WorkCategory[] = [
   },
 ];
 
+const BRANDING_IMAGES = [
+  '/images/work/branding/branding-01.png',
+  '/images/work/branding/branding-02.png',
+  '/images/work/branding/branding-03.png',
+  '/images/work/branding/branding-04.png',
+] as const;
+
 function createPlaceholderProject(params: {
   slug: string;
   category: WorkCategorySlug;
@@ -51,41 +58,56 @@ function createPlaceholderProject(params: {
   title: string;
   services: string[];
   featuredOnHome?: boolean;
+  heroImageSrc?: string;
+  galleryImageSrcs?: [string, string, string, string];
 }): ProjectItem {
-  const heroSlot: ProjectMediaSlot = {
-    type: 'placeholder',
-    label: 'PROJECT MEDIA 16:9',
-    aspectRatio: '16/9',
-    alt: `${params.title} hero media placeholder`,
-  };
+  const heroSlot: ProjectMediaSlot = params.heroImageSrc
+    ? {
+        type: 'image',
+        src: params.heroImageSrc,
+        label: 'PROJECT MEDIA 16:9',
+        aspectRatio: '16/9',
+        alt: `${params.title} hero showcase`,
+      }
+    : {
+        type: 'placeholder',
+        label: 'PROJECT MEDIA 16:9',
+        aspectRatio: '16/9',
+        alt: `${params.title} hero media placeholder`,
+      };
 
+  const g = params.galleryImageSrcs;
   const gallerySlots: ProjectMediaSlot[] = [
     {
-      type: 'placeholder',
+      type: g?.[0] ? 'image' : 'placeholder',
+      src: g?.[0],
       label: 'PROJECT MEDIA 16:9',
       aspectRatio: '16/9',
-      alt: `${params.title} full-bleed showcase placeholder`,
+      alt: `${params.title} full-bleed showcase`,
       layout: 'full',
     },
     {
-      type: 'placeholder',
+      type: g?.[1] ? 'image' : 'placeholder',
+      src: g?.[1],
       label: 'PROJECT MEDIA 4:5',
       aspectRatio: '4/5',
-      alt: `${params.title} detail placeholder 01`,
+      alt: `${params.title} detail 01`,
       layout: 'two-up',
     },
     {
-      type: 'placeholder',
+      type: g?.[2] ? 'image' : 'placeholder',
+      src: g?.[2],
       label: 'PROJECT MEDIA 4:5',
       aspectRatio: '4/5',
-      alt: `${params.title} detail placeholder 02`,
+      alt: `${params.title} detail 02`,
       layout: 'two-up',
     },
     {
-      type: 'placeholder',
+      type: g?.[3] ? 'image' : 'placeholder',
+      src: g?.[3],
       label: 'PROJECT MEDIA 16:9',
       aspectRatio: '16/9',
-      alt: `${params.title} offset showcase placeholder`,
+      alt: `${params.title} offset showcase`,
       layout: 'offset-right',
     },
   ];
@@ -119,7 +141,7 @@ function createPlaceholderProject(params: {
 }
 
 /**
- * Single source of truth for all 12 placeholder projects (4 per category).
+ * Single source of truth for all 12 projects (4 per category).
  * Do not invent clients, logos, results, or statistics.
  * Swapping in real work is a data-only change here (or via Sanity in Phase 4).
  */
@@ -132,6 +154,13 @@ export const ALL_PROJECTS: ProjectItem[] = [
     title: '[Branding project 01]',
     services: ['STRATEGY', 'IDENTITY', 'GUIDELINES'],
     featuredOnHome: true,
+    heroImageSrc: BRANDING_IMAGES[0],
+    galleryImageSrcs: [
+      BRANDING_IMAGES[0],
+      BRANDING_IMAGES[1],
+      BRANDING_IMAGES[2],
+      BRANDING_IMAGES[3],
+    ],
   }),
   createPlaceholderProject({
     slug: 'branding-project-02',
@@ -139,6 +168,13 @@ export const ALL_PROJECTS: ProjectItem[] = [
     number: '02',
     title: '[Branding project 02]',
     services: ['STRATEGY', 'IDENTITY'],
+    heroImageSrc: BRANDING_IMAGES[1],
+    galleryImageSrcs: [
+      BRANDING_IMAGES[1],
+      BRANDING_IMAGES[2],
+      BRANDING_IMAGES[3],
+      BRANDING_IMAGES[0],
+    ],
   }),
   createPlaceholderProject({
     slug: 'branding-project-03',
@@ -146,6 +182,13 @@ export const ALL_PROJECTS: ProjectItem[] = [
     number: '03',
     title: '[Branding project 03]',
     services: ['IDENTITY', 'GUIDELINES', 'PACKAGING'],
+    heroImageSrc: BRANDING_IMAGES[2],
+    galleryImageSrcs: [
+      BRANDING_IMAGES[2],
+      BRANDING_IMAGES[3],
+      BRANDING_IMAGES[0],
+      BRANDING_IMAGES[1],
+    ],
   }),
   createPlaceholderProject({
     slug: 'branding-project-04',
@@ -153,6 +196,13 @@ export const ALL_PROJECTS: ProjectItem[] = [
     number: '04',
     title: '[Branding project 04]',
     services: ['STRATEGY', 'IDENTITY', 'WEB'],
+    heroImageSrc: BRANDING_IMAGES[3],
+    galleryImageSrcs: [
+      BRANDING_IMAGES[3],
+      BRANDING_IMAGES[0],
+      BRANDING_IMAGES[1],
+      BRANDING_IMAGES[2],
+    ],
   }),
 
   // Websites (4 projects)
