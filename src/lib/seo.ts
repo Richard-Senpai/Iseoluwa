@@ -65,3 +65,22 @@ export function buildBreadcrumbJsonLd(
     })),
   };
 }
+
+export function buildFounderPersonJsonLd(): Record<string, unknown> {
+  const { founder } = SITE_CONTENT;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: founder.fullName,
+    alternateName: founder.displayName,
+    jobTitle: `${founder.title}, ${founder.roles.join(' · ')}`,
+    url: `${SITE_CONTENT.seo.siteUrl}/about`,
+    email: founder.email,
+    worksFor: {
+      '@type': 'Organization',
+      name: SITE_CONTENT.plainName,
+      url: SITE_CONTENT.seo.siteUrl,
+    },
+    sameAs: [founder.portfolioUrl, ...founder.socials.map((s) => s.href)],
+  };
+}

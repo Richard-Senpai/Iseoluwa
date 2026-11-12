@@ -1,8 +1,23 @@
 export interface SocialLink {
-  id: 'instagram' | 'linkedin' | 'x' | 'whatsapp';
+  id: 'instagram' | 'linkedin' | 'x' | 'github' | 'whatsapp';
   label: string;
   handle: string;
   href: string;
+}
+
+export interface FounderDetails {
+  fullName: string;
+  displayName: string;
+  plainName: string;
+  title: string;
+  roles: string[];
+  base: string;
+  portfolioUrl: string;
+  email: string;
+  whatsapp: string;
+  whatsappHref: string;
+  bookingUrl: string;
+  socials: SocialLink[];
 }
 
 export interface SiteContent {
@@ -28,12 +43,13 @@ export interface SiteContent {
     copyPromptLabel: string;
   };
   socials: SocialLink[];
+  founder: FounderDetails;
 }
 
 /**
- * Global studio details and brand copy.
- * NOTE: Contact details (email, WhatsApp number, and social handles) are placeholders.
- * Replace the `[add ...]` values below before launch.
+ * Global studio details, founder profile, and brand copy.
+ * NOTE: Contact details (email, WhatsApp number, portfolio URL, booking link, and social handles)
+ * are placeholders marked with TODO. Replace the `[add ...]` values below before launch.
  */
 export const SITE_CONTENT: SiteContent = {
   wordmark: 'iséoluwa',
@@ -52,18 +68,18 @@ export const SITE_CONTENT: SiteContent = {
     siteUrl: 'https://iseoluwa.com',
   },
   contact: {
-    // PLACEHOLDER: Replace with final studio email if different
+    // TODO: Replace with final studio email if different
     email: 'hello@iseoluwa.com',
-    // PLACEHOLDER: Replace `[add number]` with full international WhatsApp number
+    // TODO: Replace `[add number]` with full international WhatsApp number
     whatsappNumber: '[add number]',
     whatsappHref: 'https://wa.me/',
-    // PLACEHOLDER: Replace with studio working hours
+    // TODO: Replace with studio working hours
     workingHours: 'MON – FRI · 09:00 – 18:00 WAT / GMT [add]',
     copiedLabel: 'Copied',
     copyPromptLabel: 'Copy email',
   },
   socials: [
-    // PLACEHOLDERS: Replace `[add]` handles and URLs with live studio profiles
+    // TODO: Replace `[add]` handles and URLs with live studio profiles
     {
       id: 'instagram',
       label: 'Instagram',
@@ -89,4 +105,49 @@ export const SITE_CONTENT: SiteContent = {
       href: 'https://wa.me/',
     },
   ],
+  founder: {
+    fullName: 'Ojedayo Richard Iseoluwa',
+    displayName: 'Iséoluwa',
+    plainName: 'Iseoluwa',
+    title: 'Founder',
+    roles: ['Software Engineer', 'Full-Stack Developer', 'Product Designer', 'Brand Manager'],
+    // TODO: Replace `[Base city, country]` with founder's base location
+    base: '[Base city, country]',
+    // TODO: Replace `https://your-portfolio-link` with founder's personal portfolio URL
+    portfolioUrl: 'https://your-portfolio-link',
+    // TODO: Replace with founder's direct email if different from studio email
+    email: 'hello@iseoluwa.com',
+    // TODO: Replace `[add number]` with founder's direct WhatsApp number
+    whatsapp: '[add number]',
+    whatsappHref: 'https://wa.me/',
+    // TODO: Replace `[add booking link]` or `/contact` with Cal.com / Calendly booking URL
+    bookingUrl: '/contact#book-call',
+    socials: [
+      // TODO: Replace `[add]` handles and URLs with founder's personal social profiles
+      {
+        id: 'linkedin',
+        label: 'LinkedIn',
+        handle: '[add]',
+        href: 'https://linkedin.com',
+      },
+      {
+        id: 'x',
+        label: 'X',
+        handle: '[add]',
+        href: 'https://x.com',
+      },
+      {
+        id: 'github',
+        label: 'GitHub',
+        handle: '[add]',
+        href: 'https://github.com/Richard-Senpai',
+      },
+      {
+        id: 'instagram',
+        label: 'Instagram',
+        handle: '[add]',
+        href: 'https://instagram.com',
+      },
+    ],
+  },
 };

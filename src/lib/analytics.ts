@@ -14,7 +14,15 @@ export type AnalyticsEventName =
   | 'work_project_opened'
   | 'work_next_category_clicked'
   | 'work_next_project_clicked'
-  | 'work_cta_clicked';
+  | 'work_cta_clicked'
+  | 'about_portfolio_clicked'
+  | 'about_email_clicked'
+  | 'about_email_copied'
+  | 'about_whatsapp_clicked'
+  | 'about_booking_clicked'
+  | 'about_social_clicked'
+  | 'about_chapter_viewed'
+  | 'about_cta_clicked';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 

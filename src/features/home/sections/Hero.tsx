@@ -40,10 +40,10 @@ export function Hero() {
       {/* Signature Interactive Flowing Line (Occurrence 1 of 4) */}
       <div className="pointer-events-none absolute top-1/2 right-0 left-0 -z-0 -translate-y-1/2">
         <FlowingLine
+          weight="hero"
           amplitude={26}
           frequency={0.0045}
           speed={0.028}
-          thickness={1.8}
           reactToPointer
           rippleCount={rippleCount}
           className="h-44 md:h-64"

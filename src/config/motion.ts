@@ -1,6 +1,7 @@
 /**
- * Motion tokens from iseoluwa-design-system.md & iseoluwa-work-page-prompt.md.
- * Never hard-code eases, durations, or surface transition colours in components.
+ * Motion tokens from iseoluwa-design-system.md, iseoluwa-work-page-prompt.md,
+ * and iseoluwa-about-page-prompt.md.
+ * Never hard-code eases, durations, physics constants, or surface transition colours in components.
  */
 export const MOTION = {
   ease: {
@@ -42,15 +43,30 @@ export const MOTION = {
     flickVelocityThreshold: 280,
   },
   flowingLine: {
-    defaultAmplitude: 22,
+    defaultPoints: 64,
+    strikePoints: 32,
+    maxActiveCanvases: 2,
+    maxDevicePixelRatio: 2,
+    defaultAmplitude: 24,
     defaultFrequency: 0.0045,
-    defaultSpeed: 0.025,
-    defaultThickness: 1.75,
-    velocityMultiplier: 0.35,
-    pointerInfluenceRadius: 260,
-    pointerMaxBend: 28,
-    rippleAmplitude: 34,
-    rippleDecay: 0.94,
+    defaultSpeed: 0.024,
+    defaultThickness: 18,
+    heroWeightFallbackPx: 20,
+    sectionWeightFallbackPx: 14,
+    strikeEmRatio: 0.1,
+    strikeWobblePx: 2.4,
+    taperEndRatio: 0.3,
+    swellAmplitudeRatio: 0.16,
+    springStiffness: 0.11,
+    springDamping: 0.82,
+    neighborCoupling: 0.18,
+    velocityMultiplier: 0.42,
+    pointerInfluenceRadius: 220,
+    pointerPushStrength: 36,
+    rippleAmplitude: 42,
+    rippleSpeed: 0.045,
+    rippleWidth: 0.14,
+    rippleDecay: 0.96,
   },
   surfaceTransition: {
     light: {

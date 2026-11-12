@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import type { CurrencyCode } from '@/content/packages';
 
-export type CursorVariant = 'default' | 'view' | 'talk' | 'play' | 'drag' | 'enter';
+export type CursorVariant = 'default' | 'view' | 'talk' | 'play' | 'drag' | 'enter' | 'hello';
 
 interface UIState {
   isMenuOpen: boolean;

@@ -126,6 +126,7 @@ export function ClosingCta() {
         {/* Final appearance of the FlowingLine (Occurrence 4 of 4), ending at the footer */}
         <div className="pointer-events-none mt-12 w-full">
           <FlowingLine
+            weight="hero"
             amplitude={24}
             frequency={0.0042}
             speed={0.024}

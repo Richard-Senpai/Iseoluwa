@@ -1,6 +1,7 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
+import { FlowingLine } from '@/components/motion/FlowingLine';
 import { gsap, useGSAP } from '@/lib/animation/gsap';
 import { MOTION } from '@/config/motion';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
@@ -13,15 +14,15 @@ export interface StrikeListProps {
 }
 
 /**
- * Reusable `StrikeList` motion component (Home Prompt Section 4.3):
- * As each problem line scrolls to the center, an accent SVG flowing line draws
- * across it like a strike-through (`DrawSVG`) and the text dims to muted.
- * After the last line, the closing statement reveals at full size.
- * With reduced motion, lines render already struck through and the closing statement is visible.
+ * Reusable `StrikeList` motion component (Home Prompt Section 4.3 & About Prompt Part A):
+ * Uses the thick tapered ribbon engine (`FlowingLine` with `variant="strike"` — shorter chain,
+ * stroke ~0.1em of text size, hand-drawn wobble, tapered ends) to cross out each problem row
+ * as it scrolls through the viewport center, dimming the text to muted.
  */
 export function StrikeList({ items, closingStatement, className }: StrikeListProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const { shouldSimplifyMotion } = useMotionPreference();
+  const [rowProgress, setRowProgress] = useState<number[]>(() => items.map(() => 0));
 
   useGSAP(
     () => {
@@ -29,30 +30,31 @@ export function StrikeList({ items, closingStatement, className }: StrikeListPro
       if (!container || shouldSimplifyMotion) return;
 
       const rows = container.querySelectorAll<HTMLElement>('.strike-row');
-      rows.forEach((row) => {
-        const path = row.querySelector<SVGPathElement>('.strike-line-path');
+      rows.forEach((row, idx) => {
         const text = row.querySelector<HTMLElement>('.strike-row-text');
-
-        if (path) {
-          gsap.set(path, { drawSVG: '0%' });
-        }
+        const stateObj = { progress: 0 };
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: row,
-            start: 'top 65%',
+            start: 'top 68%',
             end: 'bottom 45%',
             scrub: true,
           },
         });
 
-        if (path) {
-          tl.to(path, {
-            drawSVG: '100%',
-            ease: MOTION.ease.linear,
-            duration: 1,
-          });
-        }
+        tl.to(stateObj, {
+          progress: 1,
+          ease: MOTION.ease.linear,
+          duration: 1,
+          onUpdate: () => {
+            setRowProgress((prev) => {
+              const next = [...prev];
+              next[idx] = stateObj.progress;
+              return next;
+            });
+          },
+        });
 
         if (text) {
           tl.to(
@@ -94,6 +96,8 @@ export function StrikeList({ items, closingStatement, className }: StrikeListPro
       <ul className="divide-y divide-line border-y border-line">
         {items.map((item, idx) => {
           const number = String(idx + 1).padStart(2, '0');
+          const progressValue = shouldSimplifyMotion ? 1 : (rowProgress[idx] ?? 0);
+
           return (
             <li
               key={item}
@@ -109,21 +113,15 @@ export function StrikeList({ items, closingStatement, className }: StrikeListPro
                 >
                   {item}
                 </p>
-                <svg
-                  aria-hidden="true"
-                  viewBox="0 0 1000 28"
-                  preserveAspectRatio="none"
-                  className="pointer-events-none absolute top-1/2 left-0 h-5 w-full -translate-y-1/2 overflow-visible"
-                >
-                  <path
-                    className="strike-line-path"
-                    d="M 0 14 Q 250 4, 500 15 T 1000 12"
-                    fill="none"
-                    stroke="var(--line-accent)"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
+                <div className="pointer-events-none absolute top-1/2 left-0 w-full -translate-y-1/2">
+                  <FlowingLine
+                    variant="strike"
+                    taper
+                    physics={false}
+                    progress={progressValue}
+                    className="h-7 w-full"
                   />
-                </svg>
+                </div>
               </div>
             </li>
           );

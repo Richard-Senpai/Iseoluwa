@@ -53,13 +53,19 @@ src/
 │   │   │                             # Testimonials, ClosingCta
 │   │   ├── home.content.ts           # All Home copy, problem list, process steps, FAQs, matcher logic
 │   │   └── index.ts                  # Exports Home sections in display order
-│   └── work/
-│       ├── components/               # CategoryPanel, CategoryView, CaseStudyView,
-│       │                             # ProjectIndexOverlay, NextCategoryBanner, WorkClosingCta
-│       ├── work.content.ts           # All Work copy, labels, and section headings
-│       └── index.ts                  # Exports Work components and content
+│   ├── work/
+│   │   ├── components/               # CategoryPanel, CategoryView, CaseStudyView,
+│   │   │                             # ProjectIndexOverlay, NextCategoryBanner, WorkClosingCta
+│   │   ├── work.content.ts           # All Work copy, labels, and section headings
+│   │   └── index.ts                  # Exports Work components and content
+│   └── about/
+│       ├── sections/                 # AboutHero, TheName, MeetFounder, VisionMissionGoal,
+│       │                             # OurValues, WhyUs, WiderNetwork, WhereWeWork,
+│       │                             # TheStandard, AboutClosingCta
+│       ├── about.content.ts          # All About copy, founder chapters, values, pillars, and reach data
+│       └── index.ts                  # Exports About sections and content
 ├── content/
-│   ├── site.ts                       # Studio name, tagline, slogan, contact placeholders, socials
+│   ├── site.ts                       # Studio name, tagline, slogan, contact placeholders, socials, founder profile
 │   ├── navigation.ts                 # Header & menu links, footer columns
 │   ├── packages.ts                   # Packages, USD/NGN pricing, and "Find your fit" matcher rules
 │   └── projects.ts                   # Single source of truth for 3 categories and 12 projects
@@ -67,15 +73,15 @@ src/
 │   ├── animation/gsap.ts             # Single registration point for GSAP + plugins
 │   ├── analytics.ts                  # Typed track(eventName, props?) helper
 │   ├── fonts.ts                      # IBM Plex Mono (next/font/google) + Aeonik (next/font/local)
-│   ├── seo.ts                        # Metadata, Organization JSON-LD, & BreadcrumbList JSON-LD
+│   ├── seo.ts                        # Metadata, Organization, Person (founder), & BreadcrumbList JSON-LD
 │   └── utils.ts                      # Class merging helpers
 ├── hooks/                            # useMotionPreference, useMediaQuery, useScrollVelocity
 ├── store/
 │   ├── ui.store.ts                   # Cursor, menu, velocity, currency, footer dark zone
 │   └── zoom.ts                       # Shared-element ZoomTransition origin rects & active request
-├── config/                           # motion.ts (eases, durations, swiper/zoom tokens), breakpoints.ts
+├── config/                           # motion.ts (eases, durations, ribbon physics, swiper/zoom tokens), breakpoints.ts
 ├── styles/
-│   ├── tokens.css                    # Light & dark CSS variables, green accents, --line-accent
+│   ├── tokens.css                    # Light & dark CSS variables, green accents, --line-weight-hero, --line-weight-section
 │   └── globals.css                   # Tailwind layers & fluid typography classes
 ├── assets/
 │   ├── fonts/                        # Licensed Aeonik WOFF2 files (see instructions below)
@@ -96,15 +102,15 @@ All motion components use `useGSAP` with a scoped ref, import GSAP exclusively f
 - **`Reveal`**: Fades and lifts content (`transform`, `opacity`) as it enters the viewport.
 - **`SplitReveal`**: Line-by-line masked headline reveal using `SplitText`.
 - **`ScrollText`**: Word-by-word scroll-scrubbed opacity reveal (`0.2` to `1`) for editorial statements and case study overviews.
-- **`StrikeList`**: Problem statements that are progressively crossed out by an animated SVG line (`DrawSVG`) and dimmed as each row passes the viewport center.
-- **`FlowingLine`**: Interactive sine-wave SVG path that draws on scroll (`DrawSVG`), drifts gently via `gsap.ticker` when visible (`IntersectionObserver`), increases amplitude with scroll velocity, bends toward the pointer on desktop, and propagates a wave ripple on click/tap.
+- **`StrikeList`**: Problem statements that are progressively crossed out by a thick, tapered ribbon stroke (`<FlowingLine variant="strike" />`) and dimmed as each row passes the viewport center.
+- **`FlowingLine`**: Thick, variable-width physical ribbon rendered on a 2D `<canvas>` (`--line-weight-hero = clamp(12px, 1.6vw, 28px)` and `--line-weight-section = clamp(8px, 1.1vw, 20px)`). Computes a spine of 36–48 points with per-point spring/damping physics (`stiffness: 0.08`, `damping: 0.84`), offsets left/right normals for tapered ends (`0.18` of base width) and mid-curve swell (`1.18` of base width) with rounded end caps, pushes aside under the pointer within `160px`, propagates travelling click/tap ripples, increases amplitude with scroll velocity, draws progressively on scroll (`ScrollTrigger` scrub), and renders a static tapered SVG path (`buildStaticTaperedRibbonSvgPath`) for reduced-motion or no-JS visitors. Managed by a singleton `RibbonTickerManager` subscribing once to `gsap.ticker`, capping active canvases at `2` (`IntersectionObserver` off-screen pause) and `devicePixelRatio` at `2`.
 - **`ProjectStack`**: Generalised scroll-driven project showcase where incoming cards slide over outgoing cards (which scale to `0.94`, darken, and parallax), with inner media clip-path reveal, `01 / 04` counter updates, optional edge scroll-progress bar, and zoom trigger into case studies.
-- **`CategorySwiper`**: Full-screen (`100dvh`) draggable carousel (`Draggable` + velocity snapping) with rubber-band edge resistance, multi-layer depth parallax, drag-velocity tilt, background surface interpolation (`Branding` light → `Websites` black → `Marketing` light), and a continuous `FlowingLine` moving at 60% of drag speed.
+- **`CategorySwiper`**: Full-screen (`100dvh`) draggable carousel (`Draggable` + velocity snapping) with rubber-band edge resistance, multi-layer depth parallax, drag-velocity tilt, background surface interpolation (`Branding` light → `Websites` black → `Marketing` light), and a continuous thick `FlowingLine` moving at 60% of drag speed.
 - **`ZoomTransition`**: Persistent GSAP `Flip` shared-element transition mounted in `app/(marketing)/work/layout.tsx`, expanding a category or project preview frame to fill the viewport on enter and shrinking back to its stored origin on Back (with crossfade fallback for deep links or reduced motion).
 - **`SurfaceTransition`**: Scroll-scrubbed interpolation of `--bg`, `--ink`, `--ink-muted`, `--line`, and `--line-accent` over the final stretch of the closing CTA into the footer.
 - **`FooterReveal`**: Curtain-style reveal of the footer beneath the closing section on viewports tall enough to fit the footer, gracefully falling back to normal document flow on short screens.
 - **`PageTransition` & `TransitionLink`**: 700ms black wipe panel with mono page title between internal routes, resetting scroll and moving focus to the new page `h1`.
-- **`Cursor`**: Desktop-only `gsap.quickTo` follower dot that expands into a labeled ring (`View`, `Talk`, `Play`, `Drag`, `Enter`) over interactive targets.
+- **`Cursor`**: Desktop-only `gsap.quickTo` follower dot that expands into a labeled ring (`View`, `Talk`, `Play`, `Drag`, `Enter`, `Hello`) over interactive targets.
 - **`Parallax`**: Inner-parallax media wrapper translating media inside overflow-clipped frames.
 - **`ThemeReveal`**: Circular clip-path reveal originating from the theme toggle button via the View Transitions API.
 

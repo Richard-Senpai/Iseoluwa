@@ -1,4 +1,7 @@
+import fs from 'node:fs';
 import { defineConfig, devices } from '@playwright/test';
+
+const systemChromium = fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined;
 
 export default defineConfig({
   testDir: './src/tests/e2e',
@@ -10,6 +13,12 @@ export default defineConfig({
   use: {
     baseURL: 'http://localhost:3000',
     trace: 'on-first-retry',
+    launchOptions: systemChromium
+      ? {
+          executablePath: systemChromium,
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        }
+      : undefined,
   },
   projects: [
     {

@@ -33,7 +33,7 @@ export function useMotionPreference(): MotionPreference {
         connection?: { saveData?: boolean };
       };
       const saveData = Boolean(navWithConnection.connection?.saveData);
-      const isLowPower = cores <= 2 || saveData;
+      const isLowPower = cores <= 1 || saveData;
 
       setState({
         reducedMotion,

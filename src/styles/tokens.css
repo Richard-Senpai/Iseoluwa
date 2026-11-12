@@ -1,6 +1,6 @@
 /* ==========================================================================
    Iséoluwa Design System Tokens
-   Single source of truth for colours, typography, and spacing.
+   Single source of truth for colours, typography, line weights, and spacing.
    ========================================================================== */
 
 :root {
@@ -20,6 +20,10 @@
 
   /* 2.5 Flowing line colour — --green-deep on light surfaces, --green-signal on dark */
   --line-accent: var(--green-deep);
+
+  /* 6.2 Flowing line ribbon weights (bold, tapered ribbon — never a hairline) */
+  --line-weight-hero: clamp(12px, 1.6vw, 28px);
+  --line-weight-section: clamp(8px, 1.1vw, 20px);
 
   /* 3. Typography fallback until licensed Aeonik WOFF2 files are placed in src/assets/fonts/ */
   --font-sans: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
@@ -57,7 +61,7 @@
   --line-accent: var(--green-signal);
 }
 
-/* Explicit inverse surface helper (e.g. What We Do black section in both themes) */
+/* Explicit inverse surface helper (e.g. What We Do & Vision/Mission black sections in both themes) */
 .surface-inverse {
   --bg: #0a0a0a;
   --surface: #121212;

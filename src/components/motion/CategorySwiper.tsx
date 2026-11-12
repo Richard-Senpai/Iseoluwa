@@ -415,10 +415,10 @@ export function CategorySwiper({ initialCategorySlug }: CategorySwiperProps) {
         className="pointer-events-none absolute top-1/2 left-0 -z-0 w-[260vw] -translate-y-1/2 will-change-transform"
       >
         <FlowingLine
+          weight="hero"
           amplitude={28}
           frequency={0.0038}
           speed={0.025}
-          thickness={1.85}
           reactToPointer
           className="h-48 w-full md:h-64"
         />

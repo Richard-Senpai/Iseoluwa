@@ -17,7 +17,13 @@ import { useGSAP } from '@gsap/react';
 let isRegistered = false;
 
 export function registerGSAP(): void {
-  if (typeof window === 'undefined' || isRegistered) return;
+  if (
+    typeof window === 'undefined' ||
+    typeof window.matchMedia !== 'function' ||
+    isRegistered
+  ) {
+    return;
+  }
   gsap.registerPlugin(
     ScrollTrigger,
     SplitText,

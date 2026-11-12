@@ -1,0 +1,11 @@
+export { ABOUT_CONTENT } from './about.content';
+export { AboutHero } from './sections/AboutHero';
+export { TheName } from './sections/TheName';
+export { MeetFounder } from './sections/MeetFounder';
+export { VisionMissionGoal } from './sections/VisionMissionGoal';
+export { OurValues } from './sections/OurValues';
+export { WhyUs } from './sections/WhyUs';
+export { WiderNetwork } from './sections/WiderNetwork';
+export { WhereWeWork } from './sections/WhereWeWork';
+export { TheStandard } from './sections/TheStandard';
+export { AboutClosingCta } from './sections/AboutClosingCta';
