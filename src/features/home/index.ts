@@ -1,0 +1,11 @@
+export { Hero } from './sections/Hero';
+export { Statement } from './sections/Statement';
+export { SoundFamiliar } from './sections/SoundFamiliar';
+export { WhatWeDo } from './sections/WhatWeDo';
+export { SelectedWork } from './sections/SelectedWork';
+export { WhyIseoluwa } from './sections/WhyIseoluwa';
+export { HowItWorks } from './sections/HowItWorks';
+export { Packages } from './sections/Packages';
+export { FaqTeaser } from './sections/FaqTeaser';
+export { Testimonials } from './sections/Testimonials';
+export { ClosingCta } from './sections/ClosingCta';

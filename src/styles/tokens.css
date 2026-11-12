@@ -1,0 +1,70 @@
+/* ==========================================================================
+   Iséoluwa Design System Tokens
+   Single source of truth for colours, typography, and spacing.
+   ========================================================================== */
+
+:root {
+  /* 2.1 Core tokens — Light mode (default) */
+  --bg: #ffffff;
+  --surface: #f5f5f3;
+  --ink: #0a0a0a;
+  --ink-muted: #6b6b66;
+  --line: #e6e6e2;
+  --inverse-bg: #0a0a0a;
+  --inverse-ink: #ffffff;
+
+  /* 2.2 Green accents — replace only these three values to re-sample from lusion.co */
+  --green-signal: #19e37a;
+  --green-light: #cff7dd;
+  --green-deep: #0b4d34;
+
+  /* 2.5 Flowing line colour — --green-deep on light surfaces, --green-signal on dark */
+  --line-accent: var(--green-deep);
+
+  /* 3. Typography fallback until licensed Aeonik WOFF2 files are placed in src/assets/fonts/ */
+  --font-sans: system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+
+  /* 4. Layout & spacing */
+  --page-margin: 20px;
+  --section-pad-y: 64px;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --page-margin: 40px;
+    --section-pad-y: 96px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --page-margin: 56px;
+    --section-pad-y: 128px;
+  }
+}
+
+.dark {
+  /* 2.1 Core tokens — Dark mode */
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --ink: #f5f5f3;
+  --ink-muted: #8f8f8a;
+  --line: #242424;
+  --inverse-bg: #ffffff;
+  --inverse-ink: #0a0a0a;
+
+  /* 2.5 Flowing line colour on dark surfaces */
+  --line-accent: var(--green-signal);
+}
+
+/* Explicit inverse surface helper (e.g. What We Do black section in both themes) */
+.surface-inverse {
+  --bg: #0a0a0a;
+  --surface: #121212;
+  --ink: #f5f5f3;
+  --ink-muted: #8f8f8a;
+  --line: #242424;
+  --line-accent: var(--green-signal);
+  background-color: var(--bg);
+  color: var(--ink);
+}
