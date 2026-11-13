@@ -173,29 +173,37 @@ export function MenuOverlay() {
               </Label>
 
               <div className="space-y-3 pt-4">
-                <p className="text-label-mono text-[#8f8f8a]">
+                <p className="text-label-mono text-ink-muted">
                   {NAVIGATION_CONTENT.footer.columnHeadings.contact}
                 </p>
                 <a
                   href={`mailto:${SITE_CONTENT.contact.email}`}
-                  className="link-underline block font-mono text-sm text-[#f5f5f3]"
+                  className="link-underline block font-mono text-sm text-ink"
                 >
                   {SITE_CONTENT.contact.email}
                 </a>
                 <a
-                  href={SITE_CONTENT.contact.whatsappHref}
+                  href={SITE_CONTENT.contact.whatsapp.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="link-underline block font-mono text-sm text-[#f5f5f3]"
+                  className="link-underline block font-mono text-sm text-ink"
                 >
-                  WhatsApp: {SITE_CONTENT.contact.whatsappNumber}
+                  WhatsApp: {SITE_CONTENT.contact.whatsapp.display}
+                </a>
+                <a
+                  href={SITE_CONTENT.contact.instagram.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="link-underline block font-mono text-sm text-ink"
+                >
+                  Instagram: {SITE_CONTENT.contact.instagram.handle}
                 </a>
               </div>
             </div>
 
-            <div className="space-y-3 border-t border-[#242424] pt-6">
-              <p className="text-label-mono text-[#8f8f8a]">{SITE_CONTENT.taglineShort}</p>
-              <p className="text-label-mono text-[#8f8f8a]">{SITE_CONTENT.regionsLine}</p>
+            <div className="space-y-3 border-t border-line pt-6">
+              <p className="text-label-mono text-ink-muted">{SITE_CONTENT.taglineShort}</p>
+              <p className="text-label-mono text-ink-muted">{SITE_CONTENT.regionsLine}</p>
             </div>
           </div>
         </div>

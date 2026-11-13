@@ -12,13 +12,22 @@ export interface ThemeToggleProps {
   className?: string;
 }
 
+interface ViewTransitionHandle {
+  ready: Promise<void>;
+  finished?: Promise<void>;
+  skipTransition?: () => void;
+}
+
 type DocumentWithViewTransition = Document & {
-  startViewTransition?: (callback: () => void) => { ready: Promise<void> };
+  startViewTransition?: (callback: () => void) => ViewTransitionHandle;
 };
+
+let activeViewTransition: ViewTransitionHandle | null = null;
 
 /**
  * Switches between light and dark themes with a circular clip-path reveal
- * originating from the toggle button via the View Transitions API (Design System Section 6.7).
+ * originating from the toggle button via the View Transitions API (Design System Section 6.7 & 13).
+ * Safely aborts any in-flight transition so `::view-transition-*` snapshots are never left behind.
  */
 export function ThemeToggle({ className }: ThemeToggleProps) {
   const { resolvedTheme, setTheme } = useTheme();
@@ -40,17 +49,29 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       return;
     }
 
+    if (activeViewTransition?.skipTransition) {
+      try {
+        activeViewTransition.skipTransition();
+      } catch {
+        // Ignore if already finished
+      }
+      activeViewTransition = null;
+    }
+
     const rect = event.currentTarget.getBoundingClientRect();
-    const x = rect.left + rect.width / 2;
-    const y = rect.top + rect.height / 2;
-    const endRadius = Math.hypot(
-      Math.max(x, window.innerWidth - x),
-      Math.max(y, window.innerHeight - y),
+    const x = Math.round(rect.left + rect.width / 2);
+    const y = Math.round(rect.top + rect.height / 2);
+    const endRadius = Math.ceil(
+      Math.hypot(
+        Math.max(x, window.innerWidth - x),
+        Math.max(y, window.innerHeight - y),
+      ),
     );
 
     const transition = doc.startViewTransition(() => {
       setTheme(nextTheme);
     });
+    activeViewTransition = transition;
 
     void transition.ready
       .then(() => {
@@ -69,7 +90,12 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         );
       })
       .catch(() => {
-        // Fallback if view transition is interrupted
+        activeViewTransition?.skipTransition?.();
+      })
+      .finally(() => {
+        if (activeViewTransition === transition) {
+          activeViewTransition = null;
+        }
       });
   };
 

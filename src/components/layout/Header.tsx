@@ -11,21 +11,21 @@ import { track } from '@/lib/analytics';
 import { cn } from '@/lib/utils';
 
 /**
- * Global Header (Design System Section 7 & Home Prompt Section 4):
+ * Global Header (Design System Sections 7 & 13, Fixes Prompt Parts 1 & 3):
  * - Left: Wordmark (`iséoluwa`).
  * - Right: mono `Menu` button, `ThemeToggle`, and always-visible `Let's talk` primary button.
- * - Transparent over the hero, gains a blurred background after scrolling.
- * - Adapts colours cleanly when `isFooterDarkZone` is active during the closing surface shift.
+ * - Transparent over the hero; gains a blurred background (`backdrop-blur-md`) only after scrolling past the hero (`scrollY > 240`).
+ * - Flips its ink and background state in a crisp 150ms tween at the moment the Rising Tide's top edge passes the header (`isFooterDarkZone`).
  */
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isScrolledPastHero, setIsScrolledPastHero] = useState(false);
   const isMenuOpen = useUIStore((s) => s.isMenuOpen);
   const toggleMenu = useUIStore((s) => s.toggleMenu);
   const isFooterDarkZone = useUIStore((s) => s.isFooterDarkZone);
 
   useEffect(() => {
     const onScroll = () => {
-      setIsScrolled(window.scrollY > 48);
+      setIsScrolledPastHero(window.scrollY > 240);
     };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -35,12 +35,12 @@ export function Header() {
   return (
     <header
       className={cn(
-        'fixed top-0 right-0 left-0 z-50 transition-colors duration-300',
+        'fixed top-0 right-0 left-0 z-50 transition-colors duration-150',
         isFooterDarkZone || isMenuOpen
-          ? 'border-b border-[#242424] bg-[#0a0a0a]/85 text-[#f5f5f3] backdrop-blur-md'
-          : isScrolled
-            ? 'border-b border-line bg-bg/85 text-ink backdrop-blur-md'
-            : 'border-b border-transparent bg-transparent text-ink',
+          ? 'border-b border-[#242424] bg-[#0a0a0a]/95 text-[#ffffff] backdrop-blur-md'
+          : isScrolledPastHero
+            ? 'border-b border-line bg-bg/95 text-ink backdrop-blur-md'
+            : 'border-b border-transparent bg-bg/90 text-ink',
       )}
     >
       <Container className="flex h-20 items-center justify-between gap-4">
@@ -53,12 +53,12 @@ export function Header() {
             aria-expanded={isMenuOpen}
             aria-controls="global-menu-overlay"
             onClick={toggleMenu}
-            className="text-label-mono inline-flex h-10 items-center gap-2 rounded-pill border border-current/20 px-4 text-current transition-colors duration-200 hover:border-line-accent"
+            className="text-label-mono inline-flex h-10 items-center gap-2 rounded-pill border border-current/20 px-4 text-current transition-colors duration-150 hover:border-line-accent"
           >
             <span
               aria-hidden="true"
               className={cn(
-                'h-1.5 w-1.5 rounded-full transition-colors duration-200',
+                'h-1.5 w-1.5 rounded-full transition-colors duration-150',
                 isMenuOpen ? 'bg-green-signal' : 'bg-current',
               )}
             />

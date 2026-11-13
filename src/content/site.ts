@@ -5,6 +5,19 @@ export interface SocialLink {
   href: string;
 }
 
+export interface WhatsAppDetails {
+  local: string;
+  display: string;
+  e164: string;
+  href: string;
+  telHref: string;
+}
+
+export interface InstagramDetails {
+  handle: string;
+  href: string;
+}
+
 export interface FounderDetails {
   fullName: string;
   displayName: string;
@@ -36,8 +49,11 @@ export interface SiteContent {
   };
   contact: {
     email: string;
+    whatsapp: WhatsAppDetails;
+    instagram: InstagramDetails;
     whatsappNumber: string;
     whatsappHref: string;
+    telHref: string;
     workingHours: string;
     copiedLabel: string;
     copyPromptLabel: string;
@@ -46,10 +62,37 @@ export interface SiteContent {
   founder: FounderDetails;
 }
 
+const WHATSAPP_PREFILLED_MESSAGE = encodeURIComponent(
+  "Hello Iséoluwa, I'd like to discuss a project.",
+);
+
+const WHATSAPP_E164 = '+2348133696869';
+const WHATSAPP_DISPLAY = '+234 813 369 6869';
+const WHATSAPP_LOCAL = '0813 369 6869';
+const WHATSAPP_LINK = `https://wa.me/2348133696869?text=${WHATSAPP_PREFILLED_MESSAGE}`;
+const WHATSAPP_TEL_LINK = `tel:${WHATSAPP_E164}`;
+
+const INSTAGRAM_HANDLE = '@iseoluwahub';
+const INSTAGRAM_URL = 'https://www.instagram.com/iseoluwahub/';
+
+/**
+ * Returns only social links that have a live configured URL and handle
+ * (excludes unconfigured TODO placeholders).
+ */
+export function getActiveSocials(socials: readonly SocialLink[]): SocialLink[] {
+  return socials.filter(
+    (s) =>
+      Boolean(s.href && s.href.trim().length > 0) &&
+      !s.handle.startsWith('[add') &&
+      !s.href.endsWith('//instagram.com') &&
+      !s.href.endsWith('//linkedin.com') &&
+      !s.href.endsWith('//x.com'),
+  );
+}
+
 /**
  * Global studio details, founder profile, and brand copy.
- * NOTE: Contact details (email, WhatsApp number, portfolio URL, booking link, and social handles)
- * are placeholders marked with TODO. Replace the `[add ...]` values below before launch.
+ * Single source of truth for contact details and social profiles.
  */
 export const SITE_CONTENT: SiteContent = {
   wordmark: 'iséoluwa',
@@ -70,39 +113,51 @@ export const SITE_CONTENT: SiteContent = {
   contact: {
     // TODO: Replace with final studio email if different
     email: 'hello@iseoluwa.com',
-    // TODO: Replace `[add number]` with full international WhatsApp number
-    whatsappNumber: '[add number]',
-    whatsappHref: 'https://wa.me/',
+    whatsapp: {
+      local: WHATSAPP_LOCAL,
+      display: WHATSAPP_DISPLAY,
+      e164: WHATSAPP_E164,
+      href: WHATSAPP_LINK,
+      telHref: WHATSAPP_TEL_LINK,
+    },
+    instagram: {
+      handle: INSTAGRAM_HANDLE,
+      href: INSTAGRAM_URL,
+    },
+    whatsappNumber: WHATSAPP_DISPLAY,
+    whatsappHref: WHATSAPP_LINK,
+    telHref: WHATSAPP_TEL_LINK,
     // TODO: Replace with studio working hours
-    workingHours: 'MON – FRI · 09:00 – 18:00 WAT / GMT [add]',
+    workingHours: 'MON – FRI · 09:00 – 18:00 WAT / GMT',
     copiedLabel: 'Copied',
     copyPromptLabel: 'Copy email',
   },
   socials: [
-    // TODO: Replace `[add]` handles and URLs with live studio profiles
     {
       id: 'instagram',
       label: 'Instagram',
-      handle: '[add]',
-      href: 'https://instagram.com',
-    },
-    {
-      id: 'linkedin',
-      label: 'LinkedIn',
-      handle: '[add]',
-      href: 'https://linkedin.com',
-    },
-    {
-      id: 'x',
-      label: 'X',
-      handle: '[add]',
-      href: 'https://x.com',
+      handle: INSTAGRAM_HANDLE,
+      href: INSTAGRAM_URL,
     },
     {
       id: 'whatsapp',
       label: 'WhatsApp',
-      handle: '[add number]',
-      href: 'https://wa.me/',
+      handle: WHATSAPP_DISPLAY,
+      href: WHATSAPP_LINK,
+    },
+    // TODO: Add LinkedIn URL when ready (kept empty so unconfigured social link does not render)
+    {
+      id: 'linkedin',
+      label: 'LinkedIn',
+      handle: '[add]',
+      href: '',
+    },
+    // TODO: Add X URL when ready (kept empty so unconfigured social link does not render)
+    {
+      id: 'x',
+      label: 'X',
+      handle: '[add]',
+      href: '',
     },
   ],
   founder: {
@@ -112,40 +167,41 @@ export const SITE_CONTENT: SiteContent = {
     title: 'Founder',
     roles: ['Software Engineer', 'Full-Stack Developer', 'Product Designer', 'Brand Manager'],
     // TODO: Replace `[Base city, country]` with founder's base location
-    base: '[Base city, country]',
+    base: 'Lagos, Nigeria',
     portfolioUrl: 'http://senpaididit.vercel.app/',
     // TODO: Replace with founder's direct email if different from studio email
     email: 'hello@iseoluwa.com',
-    // TODO: Replace `[add number]` with founder's direct WhatsApp number
-    whatsapp: '[add number]',
-    whatsappHref: 'https://wa.me/',
-    // TODO: Replace `[add booking link]` or `/contact` with Cal.com / Calendly booking URL
+    whatsapp: WHATSAPP_DISPLAY,
+    whatsappHref: WHATSAPP_LINK,
+    // TODO: Replace `/contact#book-call` with Cal.com / Calendly booking URL when ready
     bookingUrl: '/contact#book-call',
     socials: [
-      // TODO: Replace `[add]` handles and URLs with founder's personal social profiles
+      {
+        id: 'instagram',
+        label: 'Instagram',
+        handle: INSTAGRAM_HANDLE,
+        href: INSTAGRAM_URL,
+      },
+      // TODO: Add founder LinkedIn URL when ready
       {
         id: 'linkedin',
         label: 'LinkedIn',
         handle: '[add]',
-        href: 'https://linkedin.com',
+        href: '',
       },
+      // TODO: Add founder X URL when ready
       {
         id: 'x',
         label: 'X',
         handle: '[add]',
-        href: 'https://x.com',
+        href: '',
       },
+      // TODO: Add founder GitHub URL when ready
       {
         id: 'github',
         label: 'GitHub',
         handle: '[add]',
-        href: 'https://github.com/Richard-Senpai',
-      },
-      {
-        id: 'instagram',
-        label: 'Instagram',
-        handle: '[add]',
-        href: 'https://instagram.com',
+        href: '',
       },
     ],
   },

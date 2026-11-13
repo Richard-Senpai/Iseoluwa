@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { SITE_CONTENT } from '@/content/site';
+import { getActiveSocials, SITE_CONTENT } from '@/content/site';
 
 export function buildMetadata(overrides?: {
   title?: string;
@@ -38,6 +38,10 @@ export function buildMetadata(overrides?: {
 }
 
 export function buildOrganizationJsonLd(): Record<string, unknown> {
+  const sameAs = getActiveSocials(SITE_CONTENT.socials)
+    .filter((s) => s.id !== 'whatsapp')
+    .map((s) => s.href);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -45,9 +49,20 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     alternateName: SITE_CONTENT.displayName,
     url: SITE_CONTENT.seo.siteUrl,
     email: SITE_CONTENT.contact.email,
+    telephone: SITE_CONTENT.contact.whatsapp.e164,
     description: SITE_CONTENT.seo.defaultDescription,
     areaServed: ['Africa', 'Europe', 'Americas'],
-    sameAs: SITE_CONTENT.socials.map((s) => s.href),
+    sameAs,
+    contactPoint: [
+      {
+        '@type': 'ContactPoint',
+        contactType: 'customer support',
+        email: SITE_CONTENT.contact.email,
+        telephone: SITE_CONTENT.contact.whatsapp.e164,
+        availableLanguage: ['English'],
+        areaServed: ['Africa', 'Europe', 'Americas'],
+      },
+    ],
   };
 }
 
@@ -68,6 +83,7 @@ export function buildBreadcrumbJsonLd(
 
 export function buildFounderPersonJsonLd(): Record<string, unknown> {
   const { founder } = SITE_CONTENT;
+  const activeFounderSocials = getActiveSocials(founder.socials).map((s) => s.href);
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -76,16 +92,21 @@ export function buildFounderPersonJsonLd(): Record<string, unknown> {
     jobTitle: `${founder.title}, ${founder.roles.join(' · ')}`,
     url: `${SITE_CONTENT.seo.siteUrl}/about`,
     email: founder.email,
+    telephone: SITE_CONTENT.contact.whatsapp.e164,
     worksFor: {
       '@type': 'Organization',
       name: SITE_CONTENT.plainName,
       url: SITE_CONTENT.seo.siteUrl,
     },
-    sameAs: [founder.portfolioUrl, ...founder.socials.map((s) => s.href)],
+    sameAs: [founder.portfolioUrl, ...activeFounderSocials],
   };
 }
 
 export function buildContactPageJsonLd(): Record<string, unknown> {
+  const sameAs = getActiveSocials(SITE_CONTENT.socials)
+    .filter((s) => s.id !== 'whatsapp')
+    .map((s) => s.href);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
@@ -98,11 +119,14 @@ export function buildContactPageJsonLd(): Record<string, unknown> {
       name: SITE_CONTENT.plainName,
       url: SITE_CONTENT.seo.siteUrl,
       email: SITE_CONTENT.contact.email,
+      telephone: SITE_CONTENT.contact.whatsapp.e164,
+      sameAs,
       contactPoint: [
         {
           '@type': 'ContactPoint',
           contactType: 'customer support',
           email: SITE_CONTENT.contact.email,
+          telephone: SITE_CONTENT.contact.whatsapp.e164,
           availableLanguage: ['English'],
           areaServed: ['Africa', 'Europe', 'Americas'],
         },
@@ -110,4 +134,3 @@ export function buildContactPageJsonLd(): Record<string, unknown> {
     },
   };
 }
-

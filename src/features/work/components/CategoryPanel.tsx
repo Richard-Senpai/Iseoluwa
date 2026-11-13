@@ -4,6 +4,7 @@ import type { KeyboardEvent, MouseEvent } from 'react';
 import { Media } from '@/components/media/Media';
 import { TagList } from '@/components/ui/Tag';
 import { Button } from '@/components/ui/Button';
+import { SHOW_CONCEPT_BADGE } from '@/config/site';
 import type { ProjectItem, WorkCategory } from '@/content/projects';
 import { WORK_CONTENT } from '@/features/work/work.content';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
@@ -192,6 +193,19 @@ export function CategoryPanel({
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-current/15 pt-5">
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-label-mono font-medium">{projectCountLabel}</span>
+          {SHOW_CONCEPT_BADGE && projects.some((p) => p.isConcept) && (
+            <>
+              <span aria-hidden="true" className="opacity-40">
+                ·
+              </span>
+              <span
+                data-testid="concept-project-badge"
+                className="text-label-mono rounded-pill border border-current/25 px-2.5 py-0.5 opacity-80"
+              >
+                {WORK_CONTENT.stage3.conceptBadgeLabel}
+              </span>
+            </>
+          )}
           <span aria-hidden="true" className="opacity-40">
             ·
           </span>

@@ -13,6 +13,7 @@ import { ScrollText } from '@/components/motion/ScrollText';
 import { Parallax } from '@/components/motion/Parallax';
 import { Reveal } from '@/components/motion/Reveal';
 import { WorkClosingCta } from '@/features/work/components/WorkClosingCta';
+import { SHOW_CONCEPT_BADGE, SHOW_PHOTO_CREDITS } from '@/config/site';
 import type { ProjectItem, WorkCategory } from '@/content/projects';
 import { WORK_CONTENT } from '@/features/work/work.content';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
@@ -137,9 +138,19 @@ export function CaseStudyView({
               <span>{`${stage3.backToCategoryPrefix} ${category.title}`}</span>
             </a>
 
-            <Label>
-              {category.title.toUpperCase()} / {project.year}
-            </Label>
+            <div className="flex flex-wrap items-center gap-3">
+              {SHOW_CONCEPT_BADGE && project.isConcept && (
+                <span
+                  data-testid="concept-project-badge"
+                  className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
+                >
+                  {stage3.conceptBadgeLabel}
+                </span>
+              )}
+              <Label>
+                {category.title.toUpperCase()} / {project.year}
+              </Label>
+            </div>
           </div>
 
           <div className="space-y-6">
@@ -181,7 +192,14 @@ export function CaseStudyView({
             </div>
             <div className="space-y-2">
               <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.year}</dt>
-              <dd className="font-mono text-sm text-ink">{project.year}</dd>
+              <dd className="flex flex-wrap items-center gap-2 font-mono text-sm text-ink">
+                <span>{project.year}</span>
+                {SHOW_CONCEPT_BADGE && project.isConcept && (
+                  <span className="text-label-mono text-ink-muted">
+                    · {stage3.conceptBadgeLabel}
+                  </span>
+                )}
+              </dd>
             </div>
             <div className="space-y-2">
               <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.services}</dt>
@@ -254,13 +272,22 @@ export function CaseStudyView({
           {fullGallery.map((slot, idx) => (
             <Reveal key={`full-${idx}`}>
               <Parallax>
-                <Media
-                  type={slot.type === 'image' ? 'image' : 'placeholder'}
-                  src={slot.src}
-                  alt={slot.alt}
-                  label={slot.label}
-                  aspectRatio={slot.aspectRatio}
-                />
+                {slot.type === 'video' && slot.src && slot.poster ? (
+                  <LoopVideo
+                    src={slot.src}
+                    poster={slot.poster}
+                    alt={slot.alt}
+                    aspectRatio={slot.aspectRatio}
+                  />
+                ) : (
+                  <Media
+                    type={slot.type === 'image' ? 'image' : 'placeholder'}
+                    src={slot.src}
+                    alt={slot.alt}
+                    label={slot.label}
+                    aspectRatio={slot.aspectRatio}
+                  />
+                )}
               </Parallax>
             </Reveal>
           ))}
@@ -300,6 +327,19 @@ export function CaseStudyView({
               </Reveal>
             </div>
           ))}
+
+          {/* Quiet mono photo credit line at bottom of case study */}
+          {SHOW_PHOTO_CREDITS && project.credits && project.credits.length > 0 && (
+            <p
+              data-testid="case-study-photo-credits"
+              className="text-label-mono border-t border-line pt-6 text-ink-muted"
+            >
+              {stage3.photoCreditsPrefix}{' '}
+              {project.credits
+                .map((c) => `${c.photographer} (${c.source})`)
+                .join(' · ')}
+            </p>
+          )}
         </Container>
       </section>
 

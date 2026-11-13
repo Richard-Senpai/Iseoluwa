@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Accordion } from '@/components/ui/Accordion';
 import { Icon } from '@/components/ui/Icon';
-import { SITE_CONTENT } from '@/content/site';
+import { getActiveSocials, SITE_CONTENT } from '@/content/site';
 import { track } from '@/lib/analytics';
 import { CONTACT_CONTENT } from '../contact.content';
 
@@ -105,7 +105,7 @@ export function ContactInfoColumn() {
       <div className="border-b border-line pb-8">
         <p className="text-label-mono text-ink-muted">{content.socialsLabel}</p>
         <ul className="mt-3 flex flex-wrap gap-3">
-          {SITE_CONTENT.socials.map((social) => (
+          {getActiveSocials(SITE_CONTENT.socials).map((social) => (
             <li key={social.label}>
               <a
                 href={social.href}

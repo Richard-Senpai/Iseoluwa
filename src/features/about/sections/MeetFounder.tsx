@@ -11,7 +11,7 @@ import { LoopVideo } from '@/components/media/LoopVideo';
 import { FlowingLine } from '@/components/motion/FlowingLine';
 import { SplitReveal } from '@/components/motion/SplitReveal';
 import { ABOUT_CONTENT } from '@/features/about/about.content';
-import { SITE_CONTENT } from '@/content/site';
+import { getActiveSocials, SITE_CONTENT } from '@/content/site';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
 import { useUIStore } from '@/store/ui.store';
 import { track } from '@/lib/analytics';
@@ -466,7 +466,7 @@ export function MeetFounder() {
               }
               className="text-btn inline-flex items-center justify-center gap-2.5 rounded-pill border border-line bg-bg px-6 py-3.5 text-ink transition-colors hover:border-ink"
             >
-              <Icon name="call" size={20} />
+              <Icon name="whatsapp" size={20} />
               <span>{founderSection.reachMe.whatsappCta.label}</span>
             </a>
 
@@ -485,10 +485,10 @@ export function MeetFounder() {
             </Button>
           </div>
 
-          {/* Row of mono social links (LinkedIn, X, GitHub, Instagram) */}
-          {founder.socials.length > 0 && (
+          {/* Row of mono social links (only configured socials render) */}
+          {getActiveSocials(founder.socials).length > 0 && (
             <div className="flex flex-wrap items-center gap-6 border-t border-line pt-6">
-              {founder.socials.map((social) => (
+              {getActiveSocials(founder.socials).map((social) => (
                 <a
                   key={social.id}
                   href={social.href}
@@ -497,7 +497,7 @@ export function MeetFounder() {
                   onClick={() => track('about_social_clicked', { network: social.label })}
                   className="text-label-mono link-underline inline-flex items-center gap-2 text-ink-muted transition-colors hover:text-ink"
                 >
-                  <span>{social.label}</span>
+                  <span>{social.label} ({social.handle})</span>
                   <Icon name="arrow_outward" size={20} />
                 </a>
               ))}

@@ -15,7 +15,8 @@ export interface RevealProps {
 
 /**
  * Fades and lifts content in on scroll (`transform` and `opacity` only).
- * Reversible on scroll-up per Design System Section 6.1.
+ * Applies `will-change` only during active animation and clears `opacity,transform,filter,willChange`
+ * on completion so resting elements remain 100% crisp (Design System Section 13 & Tech Stack 12.1).
  */
 export function Reveal({ children, delay = 0, y = 28, className }: RevealProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -28,17 +29,23 @@ export function Reveal({ children, delay = 0, y = 28, className }: RevealProps) 
 
       gsap.fromTo(
         el,
-        { opacity: 0, y },
+        { opacity: 0, y: Math.round(y) },
         {
           opacity: 1,
           y: 0,
           duration: MOTION.duration.reveal,
           delay,
           ease: MOTION.ease.smoothOut,
+          onStart: () => {
+            gsap.set(el, { willChange: 'transform, opacity' });
+          },
+          onComplete: () => {
+            gsap.set(el, { clearProps: 'opacity,transform,filter,willChange' });
+          },
           scrollTrigger: {
             trigger: el,
             start: 'top 86%',
-            toggleActions: 'play none none reverse',
+            toggleActions: 'play none none none',
           },
         },
       );

@@ -148,3 +148,27 @@ To enable Aeonik in production:
 3. **Server Components by default.** Add `"use client"` only to interactive or animated leaf components.
 4. **Design tokens only.** Never hardcode hex values or font names inside components.
 5. **Strict TypeScript.** No `any`.
+
+---
+
+## 6. Quality Pass & Concept Projects Architecture
+
+### 6.1 Root Cause of the Contact Form Blur & Compositor Rules
+- **Root Cause**: `ContactView.tsx` previously wrapped `#contact-main-section` inside `<SurfaceTransition>`, which interpolated `--bg`, `--surface`, `--ink`, `--ink-muted`, and `--line` between light and dark across the scroll range of the section. While scrolling through the middle of the form, `--ink` and `--bg` crossed through mid-grey (`#808080`), reducing form contrast and making labels/inputs appear washed out and blurry. Additionally, `SplitReveal` kept a persistent `will-change-transform` class on inner line wrappers without calling `clearProps` on completion.
+- **Fix**:
+  1. Exempted `#contact-main-section` from `<SurfaceTransition>` and scroll-linked entrance effects so every ancestor from each form control up to `<body>` maintains `filter: none`, `backdrop-filter: none`, `opacity: 1`, `transform: none`, and `will-change: auto` at rest and at all scroll positions.
+  2. Updated `Reveal.tsx` and `SplitReveal.tsx` to apply `willChange` only in `onStart` and clear all inline compositor properties (`clearProps: 'opacity,transform,filter,willChange'`) in `onComplete`.
+  3. Restricted `Header.tsx` `backdrop-blur-md` to apply only after scrolling past the hero (`scrollY > 240`).
+  4. Added `skipTransition()` cleanup in `ThemeToggle.tsx` before starting a new View Transition.
+
+### 6.2 `.surface-inverse` Token Scope & `<PackagePrice />`
+- `.surface-inverse` (`src/styles/tokens.css`) overrides `--bg`, `--surface`, `--ink`, `--ink-muted`, `--line`, and `--line-accent` in both light mode (`#0A0A0A` bg, `#FFFFFF` ink) and `.dark .surface-inverse` (`#FFFFFF` bg, `#0A0A0A` ink) so all child elements use standard semantic classes (`bg-bg`, `text-ink`, `text-ink-muted`, `border-line`).
+- `<PackagePrice />` (`src/components/ui/PackagePrice.tsx`) renders package prices inside `[container-type:inline-size]` columns using three parts: mono `FROM` prefix, `clamp(28px, 11cqi, 52px)` amount, and mono `/ MONTH` note (or `text-heading-m` for Custom Package's `"You set the budget"`).
+
+### 6.3 Closing Section & Rising Tide (`SurfaceTransition.tsx`)
+- `SurfaceTransition.tsx` keeps the closing section's text in its constant theme colour (`--ink`) at all scroll positions (0–100% progress) and raises a dark panel (`#0A0A0A` in light mode, `#06150E` in dark mode) with an SVG wave top edge inside the bottom padding zone (`clamp(128px, 24vh, 280px)`), scrubbed to scroll and reversible.
+
+### 6.4 12 Concept Projects Pipeline (`/dev/concepts` & `pnpm concepts:export`)
+- `src/features/concepts/` (`BrandBoard.tsx`, `BrowserFrame.tsx`, `SocialGrid.tsx`, `concepts.config.ts`) and dev-only route `src/app/dev/concepts/page.tsx` (`notFound()` in production) compose 36 frames across the 12 concept projects.
+- `pnpm concepts:export` (`scripts/export-concepts.mjs`) uses Playwright to export all 36 frames as WebP (`2400×1350` 16:9 and `1600×2000` 4:5) and 3 WebM video loops into `public/media/concepts/<slug>/`.
+

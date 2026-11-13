@@ -73,7 +73,7 @@ export function WhatWeDo() {
               alt={activePreviewService.title}
               label={activePreviewService.previewLabel}
               aspectRatio="4/5"
-              className="border-[#242424] bg-[#121212] shadow-none"
+              className="border-line bg-surface shadow-none"
             />
           )}
         </div>
@@ -81,13 +81,13 @@ export function WhatWeDo() {
 
       <Container className="relative z-10 space-y-12 md:space-y-16">
         <div className="space-y-4">
-          <Label className="text-[#8f8f8a]">{whatWeDo.sectionLabel}</Label>
-          <SplitReveal as="h2" className="text-display-l text-[#f5f5f3]">
+          <Label className="text-ink-muted">{whatWeDo.sectionLabel}</Label>
+          <SplitReveal as="h2" className="text-display-l text-ink">
             {whatWeDo.headline}
           </SplitReveal>
         </div>
 
-        <div className="divide-y divide-[#242424] border-y border-[#242424]">
+        <div className="divide-y divide-line border-y border-line">
           {whatWeDo.services.map((service, index) => {
             const isExpanded = isTouch
               ? activeIndex === index
@@ -116,17 +116,17 @@ export function WhatWeDo() {
                   className="group flex w-full flex-col gap-4 text-left md:flex-row md:items-baseline md:justify-between"
                 >
                   <div className="flex items-baseline gap-6 md:gap-12">
-                    <span className="text-label-mono text-green-signal">{service.number}</span>
-                    <span className="text-display-l text-[#f5f5f3] transition-colors duration-200 group-hover:text-green-signal">
+                    <span className="text-label-mono text-line-accent">{service.number}</span>
+                    <span className="text-display-l text-ink transition-colors duration-200 group-hover:text-line-accent">
                       {service.title}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between gap-6 md:justify-end">
-                    <span className="text-heading-m text-[#8f8f8a] group-hover:text-[#f5f5f3]">
+                    <span className="text-heading-m text-ink-muted group-hover:text-ink">
                       {service.headline}
                     </span>
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#242424] text-[#f5f5f3] lg:hidden">
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line text-ink lg:hidden">
                       <Icon name={isExpanded ? 'remove' : 'add'} size={20} />
                     </span>
                   </div>
@@ -140,10 +140,10 @@ export function WhatWeDo() {
                 >
                   <div className="overflow-hidden">
                     <div className="flex flex-col justify-between gap-6 pt-6 pl-0 md:flex-row md:items-end md:pl-20">
-                      <p className="text-body-l max-w-[52ch] text-[#8f8f8a]">
+                      <p className="text-body-l max-w-[52ch] text-ink-muted">
                         {service.description}
                       </p>
-                      <TagList items={service.tags} className="text-green-signal" />
+                      <TagList items={service.tags} className="text-line-accent" />
                     </div>
                   </div>
                 </div>
@@ -155,7 +155,7 @@ export function WhatWeDo() {
         <div className="pt-4">
           <TransitionLink
             href={whatWeDo.exploreLink.href}
-            className="link-underline text-btn text-[#f5f5f3] hover:text-green-signal"
+            className="link-underline text-btn text-ink hover:text-line-accent"
           >
             <span>{whatWeDo.exploreLink.label}</span>
             <Icon name="arrow_outward" size={20} />

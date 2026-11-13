@@ -12,6 +12,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { ChipGroup } from '@/components/ui/ChipGroup';
 import { Icon } from '@/components/ui/Icon';
+import { PackagePrice } from '@/components/ui/PackagePrice';
 import { TransitionLink } from '@/components/motion/TransitionLink';
 import { BudgetPicker } from '@/features/contact/components/BudgetPicker';
 import {
@@ -794,7 +795,7 @@ export function ProjectRequestForm({
               {selectedPackageObj && (
                 <div
                   data-testid="selected-package-summary-card"
-                  className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-line-accent bg-bg p-5"
+                  className="flex flex-wrap items-center justify-between gap-4 rounded-card border border-line-accent bg-bg p-5 [container-type:inline-size]"
                 >
                   <div className="space-y-1">
                     <span className="text-label-mono text-accent">
@@ -804,9 +805,11 @@ export function ProjectRequestForm({
                       <h3 className="font-sans text-xl font-medium text-ink">
                         {selectedPackageObj.name}
                       </h3>
-                      <span className="font-mono text-sm text-ink-muted">
-                        {selectedPackageObj.prices[values.currency]}
-                      </span>
+                      <PackagePrice
+                        price={selectedPackageObj.prices[values.currency]}
+                        isCustom={selectedPackageObj.isCustom}
+                        compact
+                      />
                       <span className="font-mono text-xs text-ink-muted">
                         · {formCopy.step2.selectedPackageSummary.timelinePrefix}{' '}
                         {selectedPackageObj.timeline}

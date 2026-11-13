@@ -12,12 +12,12 @@ import { useUIStore } from '@/store/ui.store';
 import { track } from '@/lib/analytics';
 
 /**
- * Section 11: Closing Call to Action & Surface Colour Transition (About Prompt Section B3.11 & B4)
- * - Headline: Ready to build something excellent?
+ * Section 11: Closing Call to Action & Rising Tide (About Prompt Section B3.11 & Fixes Part 3)
+ * - Headline in first 10 columns (`lg:col-span-10`) aligned with mono label: Ready to build something excellent?
  * - Text: Tell us about your project. We reply within one business day.
  * - Buttons: "Start a project" and "Book a free 20-minute call"
  * - Thick FlowingLine (`weight="hero"`, `drawOnScroll`) — Occurrence 3 of 3 on `/about`
- * - Wrapped in `SurfaceTransition` so the page smoothly transitions into the dark footer
+ * - Wrapped in `SurfaceTransition` (Rising Tide) into the dark footer
  */
 export function AboutClosingCta() {
   const { closingCta } = ABOUT_CONTENT;
@@ -29,24 +29,26 @@ export function AboutClosingCta() {
     <SurfaceTransition className="relative z-10 border-t border-line">
       <section
         id="about-closing-cta"
-        className="relative overflow-hidden py-[var(--section-pad-y)] pb-28 md:pb-40"
+        className="relative isolate overflow-hidden pt-[clamp(96px,16vh,200px)] pb-[clamp(128px,24vh,280px)]"
       >
         <Container className="relative z-10 space-y-12">
-          <div className="space-y-6">
-            <Label>{closingCta.sectionLabel}</Label>
+          <div className="grid grid-cols-1 lg:grid-cols-12">
+            <div className="space-y-6 lg:col-span-10">
+              <Label>{closingCta.sectionLabel}</Label>
 
-            <div
-              data-cursor="talk"
-              onMouseEnter={() => !isTouch && setCursor('talk', closingCta.cursorLabel)}
-              onMouseLeave={() => !isTouch && resetCursor()}
-              className="inline-block"
-            >
-              <SplitReveal as="h2" className="text-display-xl max-w-[14ch] text-ink">
-                {closingCta.headline}
-              </SplitReveal>
+              <div
+                data-cursor="talk"
+                onMouseEnter={() => !isTouch && setCursor('talk', closingCta.cursorLabel)}
+                onMouseLeave={() => !isTouch && resetCursor()}
+                className="block"
+              >
+                <SplitReveal as="h2" className="text-display-xl text-left text-balance text-ink">
+                  {closingCta.headline}
+                </SplitReveal>
+              </div>
+
+              <p className="text-body-l max-w-[48ch] text-ink-muted">{closingCta.body}</p>
             </div>
-
-            <p className="text-body-l max-w-[48ch] text-ink-muted">{closingCta.body}</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -69,15 +71,15 @@ export function AboutClosingCta() {
           </div>
         </Container>
 
-        {/* Final occurrence of the thick FlowingLine on /about (3 of 3), ending at the footer */}
-        <div className="pointer-events-none mt-12 w-full">
+        {/* Final occurrence of the thick FlowingLine on /about (3 of 3), inside the bottom tide zone */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 w-full">
           <FlowingLine
             weight="hero"
             amplitude={24}
             frequency={0.0042}
             speed={0.024}
             drawOnScroll
-            className="h-32 md:h-44"
+            className="h-24 md:h-36"
           />
         </div>
       </section>

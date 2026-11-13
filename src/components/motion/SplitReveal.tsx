@@ -15,8 +15,11 @@ export interface SplitRevealProps {
 }
 
 /**
- * Line-by-line masked headline reveal using GSAP `SplitText` (Design System Section 6.4).
- * Falls back to a simple fade or visible text when reduced motion is enabled.
+ * Line-by-line masked headline reveal using GSAP `SplitText` (Design System Sections 6.4 & 13, Prompt Part 3.2):
+ * - Lines rise from below a mask with NO opacity animation (always 100% opaque).
+ * - Mask wrappers include bottom padding (`pb-[0.14em] -mb-[0.14em]`) so descenders (`g`, `y`, `p`, `j`) are never clipped.
+ * - `will-change` is set only during the active tween and removed on completion.
+ * - On completion, masks switch to `overflow: visible` and `clearProps: "opacity,transform,filter,willChange"` is applied.
  */
 export function SplitReveal({
   as: Component = 'div',
@@ -33,34 +36,44 @@ export function SplitReveal({
       const el = rootRef.current;
       if (!el || shouldSimplifyMotion) return;
 
-      let split: SplitText | null = null;
+      let outerSplit: SplitText | null = null;
       try {
-        split = new SplitText(el, {
+        outerSplit = new SplitText(el, {
           type: 'lines',
-          linesClass: 'overflow-hidden block',
+          linesClass: 'overflow-hidden block pb-[0.14em] -mb-[0.14em]',
         });
 
-        const innerSplit = new SplitText(split.lines, {
+        const innerSplit = new SplitText(outerSplit.lines, {
           type: 'lines',
-          linesClass: 'block will-change-transform',
+          linesClass: 'block',
         });
 
         gsap.fromTo(
           innerSplit.lines,
-          { yPercent: 105, opacity: 0 },
+          { yPercent: 108 },
           {
             yPercent: 0,
-            opacity: 1,
             duration: MOTION.duration.reveal,
             stagger: MOTION.stagger.lines,
             delay,
             ease: MOTION.ease.reveal,
+            onStart: () => {
+              gsap.set(innerSplit.lines, { willChange: 'transform' });
+            },
+            onComplete: () => {
+              gsap.set(innerSplit.lines, {
+                clearProps: 'opacity,transform,filter,willChange',
+              });
+              if (outerSplit?.lines) {
+                gsap.set(outerSplit.lines, { overflow: 'visible' });
+              }
+            },
             scrollTrigger: triggerOnLoad
               ? undefined
               : {
                   trigger: el,
-                  start: 'top 86%',
-                  toggleActions: 'play none none reverse',
+                  start: 'top 88%',
+                  toggleActions: 'play none none none',
                 },
           },
         );
@@ -68,19 +81,24 @@ export function SplitReveal({
         // Fallback if SplitText cannot measure lines in a headless/non-layout environment
         gsap.fromTo(
           el,
-          { y: 24, opacity: 0 },
+          { y: 20 },
           {
             y: 0,
-            opacity: 1,
             duration: MOTION.duration.reveal,
             delay,
             ease: MOTION.ease.reveal,
+            onStart: () => {
+              gsap.set(el, { willChange: 'transform' });
+            },
+            onComplete: () => {
+              gsap.set(el, { clearProps: 'opacity,transform,filter,willChange' });
+            },
           },
         );
       }
 
       return () => {
-        split?.revert();
+        outerSplit?.revert();
       };
     },
     { scope: rootRef, dependencies: [shouldSimplifyMotion, triggerOnLoad, delay] },

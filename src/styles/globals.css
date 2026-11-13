@@ -50,9 +50,10 @@
   .text-display-xl {
     font-family: var(--font-sans);
     font-weight: 400;
-    font-size: clamp(2.75rem, 8.5vw, 9.5rem);
-    line-height: 0.95;
+    font-size: clamp(2.75rem, 9.5vw, 10rem);
+    line-height: 0.98;
     letter-spacing: -0.035em;
+    text-wrap: balance;
   }
 
   .text-display-l {

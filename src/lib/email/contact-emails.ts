@@ -196,7 +196,7 @@ export function buildClientConfirmationEmail(data: ContactFormValues): BuiltEmai
         <p style="margin: 4px 0;"><strong>Timeline:</strong> ${escapeHtml(data.startTimeline)}</p>
       </div>
 
-      <p>Want to speak sooner? You can <a href="${escapeHtml(SITE_CONTENT.founder.bookingUrl)}" style="color: #15803d; font-weight: 600;">book a free 20-minute call</a> or <a href="${escapeHtml(SITE_CONTENT.contact.whatsappHref)}" style="color: #15803d; font-weight: 600;">message us on WhatsApp</a>.</p>
+      <p>Want to speak sooner? You can <a href="${escapeHtml(SITE_CONTENT.founder.bookingUrl)}" style="color: #15803d; font-weight: 600;">book a free 20-minute call</a>, <a href="${escapeHtml(SITE_CONTENT.contact.whatsapp.href)}" style="color: #15803d; font-weight: 600;">message us on WhatsApp (${escapeHtml(SITE_CONTENT.contact.whatsapp.display)})</a>, or follow us on Instagram at <a href="${escapeHtml(SITE_CONTENT.contact.instagram.href)}" style="color: #15803d; font-weight: 600;">${escapeHtml(SITE_CONTENT.contact.instagram.handle)}</a>.</p>
     </div>
   `.trim();
 

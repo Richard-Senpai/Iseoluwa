@@ -5,6 +5,7 @@ import { Container } from '@/components/ui/Container';
 import { Label } from '@/components/ui/Label';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
+import { PackagePrice } from '@/components/ui/PackagePrice';
 import { SplitReveal } from '@/components/motion/SplitReveal';
 import { TransitionLink } from '@/components/motion/TransitionLink';
 import {
@@ -110,84 +111,56 @@ export function Packages() {
         </div>
 
         {/* Four package columns separated by hairlines (4th is inverse Custom Package) */}
-        <div className="grid grid-cols-1 divide-y divide-line border-y border-line md:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+        <div
+          data-testid="packages-grid"
+          className="grid grid-cols-1 divide-y divide-line border-y border-line md:grid-cols-[repeat(2,minmax(0,1fr))] md:divide-y-0 lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:divide-x"
+        >
           {PACKAGES_CONTENT.packages.map((pkg) => {
             const isCustom = pkg.isCustom === true;
             return (
               <article
                 key={pkg.slug}
+                data-testid={`package-card-${pkg.slug}`}
                 className={cn(
-                  'flex flex-col justify-between gap-10 p-8 lg:py-10',
-                  isCustom
-                    ? 'bg-surface-inverse text-ink-on-inverse'
-                    : 'lg:first:pl-0',
+                  'flex min-w-0 flex-col justify-between gap-10 p-6 md:p-8 lg:px-7 lg:py-10 [container-type:inline-size]',
+                  isCustom && 'surface-inverse border border-line',
                 )}
               >
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0 space-y-5">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <span
                       className={cn(
                         'text-label-mono',
-                        isCustom ? 'text-accent' : 'text-ink-muted',
+                        isCustom ? 'text-line-accent' : 'text-ink-muted',
                       )}
                     >
                       {isCustom && pkg.badgeLabel ? pkg.badgeLabel : pkg.number}
                     </span>
-                    <span
-                      className={cn(
-                        'text-label-mono',
-                        isCustom ? 'text-inverse-ink/70' : 'text-ink-muted',
-                      )}
-                    >
+                    <span className="text-label-mono text-ink-muted">
                       {PACKAGES_CONTENT.timelinePrefix} · {pkg.timelineLabel}
                     </span>
                   </div>
 
-                  <div className="space-y-2">
-                    <h3
-                      className={cn(
-                        'text-heading-m',
-                        isCustom ? 'text-inverse-ink' : 'text-ink',
-                      )}
-                    >
-                      {pkg.name}
-                    </h3>
+                  <div className="space-y-2 lg:min-h-[5.5rem]">
+                    <h3 className="text-heading-m text-ink">{pkg.name}</h3>
                     {pkg.tagline && (
-                      <p
-                        className={cn(
-                          'font-sans text-lg font-medium tracking-tight',
-                          isCustom ? 'text-inverse-ink' : 'text-ink',
-                        )}
-                      >
+                      <p className="font-sans text-lg font-medium tracking-tight text-ink">
                         {pkg.tagline}
                       </p>
                     )}
                   </div>
 
-                  <p
-                    className={cn(
-                      'text-body max-w-[44ch]',
-                      isCustom ? 'text-inverse-ink/80' : 'text-ink-muted',
-                    )}
-                  >
+                  <p className="text-body max-w-[44ch] text-ink-muted">
                     {pkg.description}
                   </p>
                 </div>
 
-                <div
-                  className={cn(
-                    'space-y-6 border-t pt-6',
-                    isCustom ? 'border-inverse-ink/20' : 'border-line',
-                  )}
-                >
-                  <p
-                    className={cn(
-                      'text-display-l',
-                      isCustom ? 'text-inverse-ink' : 'text-ink',
-                    )}
-                  >
-                    {pkg.prices[currency]}
-                  </p>
+                <div className="min-w-0 space-y-6 border-t border-line pt-6">
+                  <PackagePrice
+                    price={pkg.prices[currency]}
+                    isCustom={isCustom}
+                    className="lg:min-h-[5.5rem]"
+                  />
                   <TransitionLink
                     href={pkg.href}
                     onClick={() => {
@@ -206,9 +179,9 @@ export function Packages() {
                       }
                     }}
                     className={cn(
-                      'inline-flex items-center justify-between gap-3 rounded-pill px-5 py-3 text-sm font-medium transition-colors duration-200',
+                      'inline-flex w-full items-center justify-between gap-3 rounded-pill px-5 py-3 text-sm font-medium transition-colors duration-200',
                       isCustom
-                        ? 'bg-inverse-ink text-inverse-bg hover:opacity-90'
+                        ? 'bg-ink text-bg hover:opacity-90'
                         : 'border border-line text-ink hover:border-ink',
                     )}
                   >

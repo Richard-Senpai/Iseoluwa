@@ -61,14 +61,28 @@
   --line-accent: var(--green-signal);
 }
 
-/* Explicit inverse surface helper (e.g. What We Do & Vision/Mission black sections in both themes) */
+/* 14.1 Inverse surface scope (.surface-inverse)
+   Light mode: near-black card/section with crisp white ink
+   Dark mode: pure white card/section with near-black ink */
 .surface-inverse {
   --bg: #0a0a0a;
-  --surface: #121212;
-  --ink: #f5f5f3;
-  --ink-muted: #8f8f8a;
-  --line: #242424;
+  --surface: #141414;
+  --ink: #ffffff;
+  --ink-muted: #a8a8a2;
+  --line: #2a2a2a;
   --line-accent: var(--green-signal);
   background-color: var(--bg);
   color: var(--ink);
 }
+
+.dark .surface-inverse {
+  --bg: #ffffff;
+  --surface: #f5f5f3;
+  --ink: #0a0a0a;
+  --ink-muted: #55554f;
+  --line: #d9d9d4;
+  --line-accent: var(--green-deep);
+  background-color: var(--bg);
+  color: var(--ink);
+}
+

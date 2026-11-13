@@ -23,6 +23,13 @@ export interface ProjectTestimonial {
   company: string;
 }
 
+export interface ProjectPhotoCredit {
+  photographer: string;
+  source: 'Unsplash' | 'Pexels';
+  url: string;
+  unsplashSearchUrl?: string;
+}
+
 export interface WorkCategory {
   slug: WorkCategorySlug;
   number: string;
@@ -47,6 +54,11 @@ export interface ProjectItem {
   challenge: string;
   approach: string;
   outcome: string;
+  /** Whether this project is a studio concept project */
+  isConcept?: boolean;
+  /** Featured on Home page "Selected work" section */
+  featured?: boolean;
+  /** Alias kept for backward compatibility */
   featuredOnHome?: boolean;
   href: string;
   /** Primary media slot kept backward-compatible with Home `ProjectStack` */
@@ -55,4 +67,5 @@ export interface ProjectItem {
     gallery: ProjectMediaSlot[];
   };
   testimonial?: ProjectTestimonial;
+  credits?: ProjectPhotoCredit[];
 }

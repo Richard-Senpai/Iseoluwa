@@ -44,6 +44,8 @@ export interface WorkPageContent {
       testimonial: string;
       nextProject: string;
     };
+    conceptBadgeLabel: string;
+    photoCreditsPrefix: string;
   };
   closingCta: {
     sectionLabel: string;
@@ -51,6 +53,7 @@ export interface WorkPageContent {
     cursorLabel: string;
     primaryCta: { label: string; href: string };
     secondaryCta: { label: string; href: string };
+    whatsappCta: { label: string };
     reassurance: string;
   };
 }
@@ -102,6 +105,8 @@ export const WORK_CONTENT: WorkPageContent = {
       testimonial: '06 / CLIENT WORDS',
       nextProject: 'NEXT PROJECT',
     },
+    conceptBadgeLabel: 'CONCEPT PROJECT',
+    photoCreditsPrefix: 'Photo credits:',
   },
   closingCta: {
     sectionLabel: 'START SOMETHING',
@@ -114,6 +119,9 @@ export const WORK_CONTENT: WorkPageContent = {
     secondaryCta: {
       label: 'Book a free 20-minute call',
       href: '/contact?intent=call',
+    },
+    whatsappCta: {
+      label: 'Message us on WhatsApp',
     },
     reassurance: 'Free 20-minute call. No obligation.',
   },

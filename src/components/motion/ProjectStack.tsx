@@ -8,7 +8,9 @@ import { TagList } from '@/components/ui/Tag';
 import { SplitReveal } from '@/components/motion/SplitReveal';
 import { Parallax } from '@/components/motion/Parallax';
 import { TransitionLink } from '@/components/motion/TransitionLink';
+import { SHOW_CONCEPT_BADGE } from '@/config/site';
 import type { ProjectItem } from '@/content/projects';
+import { WORK_CONTENT } from '@/features/work/work.content';
 import { gsap, useGSAP } from '@/lib/animation/gsap';
 import { MOTION } from '@/config/motion';
 import { useMotionPreference } from '@/hooks/useMotionPreference';
@@ -262,7 +264,17 @@ export function ProjectStack({
                     </span>
                     <TagList items={project.services} />
                   </div>
-                  <span className="text-label-mono text-ink-muted">{project.year}</span>
+                  <div className="flex items-center gap-2.5">
+                    {SHOW_CONCEPT_BADGE && project.isConcept && (
+                      <span
+                        data-testid="concept-project-badge"
+                        className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
+                      >
+                        {WORK_CONTENT.stage3.conceptBadgeLabel}
+                      </span>
+                    )}
+                    <span className="text-label-mono text-ink-muted">{project.year}</span>
+                  </div>
                 </div>
 
                 {/* Large Media Frame with Clip-Path Reveal & Inner Parallax */}

@@ -38,7 +38,10 @@ test.describe('About Page (/about) & Thick FlowingLine Ribbon', () => {
 
     const whatsappLink = page.getByTestId('founder-whatsapp-link');
     await expect(whatsappLink).toBeVisible();
-    await expect(whatsappLink).toHaveAttribute('href', 'https://wa.me/');
+    await expect(whatsappLink).toHaveAttribute(
+      'href',
+      "https://wa.me/2348133696869?text=Hello%20Is%C3%A9oluwa%2C%20I'd%20like%20to%20discuss%20a%20project.",
+    );
 
     // 5. Verify founder email copy-to-clipboard button updates to "Copied"
     const copyBtn = page.getByTestId('founder-copy-email');

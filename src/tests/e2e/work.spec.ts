@@ -13,6 +13,9 @@ test.describe('Iséoluwa Work Section E2E Flow', () => {
     await expect(brandingPanel).toHaveAttribute('data-active', 'true');
     await expect(page.getByTestId('work-swiper-counter')).toHaveText('01 / 03');
     await expect(page.getByTestId('flowing-line-canvas').first()).toBeVisible();
+    await expect(brandingPanel.getByTestId('concept-project-badge')).toHaveText(
+      'CONCEPT PROJECT',
+    );
 
     await brandingPanel.focus();
     await page.keyboard.press('ArrowRight');
@@ -39,18 +42,24 @@ test.describe('Iséoluwa Work Section E2E Flow', () => {
     await openBtn.click();
     await expect(overlay).toHaveAttribute('aria-hidden', 'false');
 
-    await page.getByTestId('work-index-item-branding-project-03').click();
+    await page.getByTestId('work-index-item-northfield-legal').click();
     await expect(overlay).toHaveAttribute('aria-hidden', 'true');
   });
 
-  test('clicking a project opens its case study and Back returns to the category and selector', async ({
+  test('clicking a concept project opens its case study and Back returns to the category and selector', async ({
     page,
   }) => {
     await page.goto('/work/branding');
-    await page.locator('#project-card-branding-project-01 a').click();
+    await page.locator('#project-card-ayo-roasters a').click();
 
-    await expect(page).toHaveURL(/\/work\/branding\/branding-project-01$/);
-    await expect(page.locator('main h1')).toHaveText('[Branding project 01]');
+    await expect(page).toHaveURL(/\/work\/branding\/ayo-roasters$/);
+    await expect(page.locator('main h1')).toHaveText('Ayo Roasters');
+    await expect(page.getByTestId('concept-project-badge').first()).toHaveText(
+      'CONCEPT PROJECT',
+    );
+    await expect(page.getByTestId('case-study-photo-credits')).toContainText(
+      'Photo credits:',
+    );
 
     // Back from case study returns to /work/branding
     await page.getByTestId('back-to-category').click();

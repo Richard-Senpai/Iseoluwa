@@ -44,14 +44,14 @@ export function VisionMissionGoal() {
     <section
       id="what-drives-us"
       ref={sectionRef}
-      className="surface-inverse relative border-t border-white/15 py-[var(--section-pad-y)]"
+      className="surface-inverse relative border-t border-line py-[var(--section-pad-y)]"
     >
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
           {/* Left Sticky Rail: 03 / WHAT DRIVES US + VISION · MISSION · GOAL */}
           <div className="lg:col-span-4">
             <div className="space-y-8 lg:sticky lg:top-32">
-              <p className="text-label-mono text-white/65">{whatDrivesUs.sectionLabel}</p>
+              <p className="text-label-mono text-ink-muted">{whatDrivesUs.sectionLabel}</p>
 
               <nav aria-label="What drives us navigation" className="flex flex-wrap items-center gap-3">
                 {whatDrivesUs.pillars.map((pillar, idx) => {
@@ -63,20 +63,20 @@ export function VisionMissionGoal() {
                         onClick={() => setActivePillarId(pillar.id)}
                         className={cn(
                           'text-label-mono relative pb-2 transition-colors duration-200',
-                          isActive ? 'text-white' : 'text-white/50 hover:text-white/85',
+                          isActive ? 'text-ink' : 'text-ink-muted hover:text-ink',
                         )}
                       >
                         <span>{pillar.railLabel}</span>
                         <span
                           aria-hidden="true"
                           className={cn(
-                            'absolute right-0 bottom-0 left-0 h-[3px] rounded-full bg-accent transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                            'absolute right-0 bottom-0 left-0 h-[3px] rounded-full bg-line-accent transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
                             isActive ? 'scale-x-100' : 'scale-x-0',
                           )}
                         />
                       </a>
                       {idx < whatDrivesUs.pillars.length - 1 && (
-                        <span aria-hidden="true" className="font-mono text-xs text-white/35">
+                        <span aria-hidden="true" className="font-mono text-xs text-ink-muted">
                           {whatDrivesUs.railSeparator}
                         </span>
                       )}
@@ -88,7 +88,7 @@ export function VisionMissionGoal() {
           </div>
 
           {/* Right Column: Three Large Statements lit up word by word */}
-          <div className="divide-y divide-white/15 lg:col-span-8">
+          <div className="divide-y divide-line lg:col-span-8">
             {whatDrivesUs.pillars.map((pillar) => (
               <article
                 key={pillar.id}
@@ -96,10 +96,10 @@ export function VisionMissionGoal() {
                 data-pillar-id={pillar.id}
                 className="py-12 first:pt-0 last:pb-0 md:py-20"
               >
-                <h2 className="text-label-mono mb-6 text-accent">{pillar.title}</h2>
+                <h2 className="text-label-mono mb-6 text-line-accent">{pillar.title}</h2>
                 <ScrollText
                   text={pillar.statement}
-                  className="text-display-m text-white"
+                  className="text-display-m text-ink"
                 />
               </article>
             ))}

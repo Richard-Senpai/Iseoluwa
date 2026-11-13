@@ -15,13 +15,12 @@ import { useUIStore } from '@/store/ui.store';
 import { track } from '@/lib/analytics';
 
 /**
- * Section 11: Closing call to action & Surface Colour Transition (Home Prompt Section 4.11 & 4.12)
+ * Section 11: Closing call to action & Rising Tide (Home Prompt Section 4.11 & 4.12 + Fixes Part 3)
  * - Section label: 08 / LET'S TALK
- * - Headline (Display XL): Let's build something excellent. (Cursor ring labelled "Talk" on desktop)
+ * - Headline (Display XL) in first 10 columns (`lg:col-span-10`), left-aligned with section label
  * - Large email link (`hello@iseoluwa.com`) that copies to clipboard on click with "Copied" confirmation
  * - Buttons: "Start a project" and "Book a free 20-minute call", plus "Message us on WhatsApp"
- * - Final appearance of the FlowingLine (Occurrence 4 of 4)
- * - Wrapped in `SurfaceTransition` so the page smoothly transitions to dark as it meets the footer
+ * - Final appearance of the FlowingLine (Occurrence 4 of 4) inside the bottom tide zone
  */
 export function ClosingCta() {
   const { closingCta } = HOME_CONTENT;
@@ -45,24 +44,26 @@ export function ClosingCta() {
     <SurfaceTransition className="relative z-10 border-t border-line">
       <section
         id="lets-talk"
-        className="relative overflow-hidden py-[var(--section-pad-y)] pb-28 md:pb-40"
+        className="relative isolate overflow-hidden pt-[clamp(96px,16vh,200px)] pb-[clamp(128px,24vh,280px)]"
       >
         <Container className="relative z-10 space-y-12 md:space-y-16">
-          <div className="space-y-6">
-            <Label>{closingCta.sectionLabel}</Label>
+          <div className="grid grid-cols-1 lg:grid-cols-12">
+            <div className="space-y-6 lg:col-span-10">
+              <Label>{closingCta.sectionLabel}</Label>
 
-            <div
-              data-cursor="talk"
-              onMouseEnter={() => !isTouch && setCursor('talk', closingCta.cursorLabel)}
-              onMouseLeave={() => !isTouch && resetCursor()}
-              className="inline-block"
-            >
-              <SplitReveal as="h2" className="text-display-xl max-w-[14ch] text-ink">
-                {closingCta.headline}
-              </SplitReveal>
+              <div
+                data-cursor="talk"
+                onMouseEnter={() => !isTouch && setCursor('talk', closingCta.cursorLabel)}
+                onMouseLeave={() => !isTouch && resetCursor()}
+                className="block"
+              >
+                <SplitReveal as="h2" className="text-display-xl text-left text-balance text-ink">
+                  {closingCta.headline}
+                </SplitReveal>
+              </div>
+
+              <p className="text-body-l max-w-[48ch] text-ink-muted">{closingCta.body}</p>
             </div>
-
-            <p className="text-body-l max-w-[48ch] text-ink-muted">{closingCta.body}</p>
           </div>
 
           {/* Copyable large email link */}
@@ -108,7 +109,7 @@ export function ClosingCta() {
               </Button>
 
               <a
-                href={SITE_CONTENT.contact.whatsappHref}
+                href={SITE_CONTENT.contact.whatsapp.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track('whatsapp_click', { location: 'closing_cta' })}
@@ -123,15 +124,15 @@ export function ClosingCta() {
           </div>
         </Container>
 
-        {/* Final appearance of the FlowingLine (Occurrence 4 of 4), ending at the footer */}
-        <div className="pointer-events-none mt-12 w-full">
+        {/* Final appearance of the FlowingLine (Occurrence 4 of 4), inside the bottom tide zone */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 z-10 w-full">
           <FlowingLine
             weight="hero"
             amplitude={24}
             frequency={0.0042}
             speed={0.024}
             drawOnScroll
-            className="h-32 md:h-44"
+            className="h-24 md:h-36"
           />
         </div>
       </section>
