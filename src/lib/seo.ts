@@ -84,3 +84,30 @@ export function buildFounderPersonJsonLd(): Record<string, unknown> {
     sameAs: [founder.portfolioUrl, ...founder.socials.map((s) => s.href)],
   };
 }
+
+export function buildContactPageJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: `Contact ${SITE_CONTENT.plainName}`,
+    url: `${SITE_CONTENT.seo.siteUrl}/contact`,
+    description:
+      'Tell us about your project and budget. We reply within one business day. Branding, websites, and marketing for growing businesses.',
+    mainEntity: {
+      '@type': 'Organization',
+      name: SITE_CONTENT.plainName,
+      url: SITE_CONTENT.seo.siteUrl,
+      email: SITE_CONTENT.contact.email,
+      contactPoint: [
+        {
+          '@type': 'ContactPoint',
+          contactType: 'customer support',
+          email: SITE_CONTENT.contact.email,
+          availableLanguage: ['English'],
+          areaServed: ['Africa', 'Europe', 'Americas'],
+        },
+      ],
+    },
+  };
+}
+

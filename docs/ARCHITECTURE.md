@@ -32,14 +32,16 @@ src/
 │   │   ├── services/page.tsx
 │   │   ├── about/page.tsx
 │   │   ├── faq/page.tsx
-│   │   └── contact/page.tsx
+│   │   └── contact/
+│   │       ├── page.tsx              # Contact page (/contact) with ?package= & ?source= support
+│   │       └── thank-you/page.tsx    # Post-submission confirmation (/contact/thank-you, noindex)
 │   ├── api/
 │   │   ├── newsletter/route.ts       # Newsletter subscription endpoint (Zod + honeypot)
-│   │   └── contact/route.ts          # Contact form endpoint (Phase 3)
+│   │   └── contact/route.ts          # Contact form endpoint (Zod + honeypot + rate limit + Resend)
 │   ├── sitemap.ts                    # Includes main routes, 3 work categories, and 12 projects
 │   └── robots.ts
 ├── components/
-│   ├── ui/                           # Button, Icon, Container, Heading, Label, Tag, Accordion
+│   ├── ui/                           # Button, Icon, Container, Heading, Label, Tag, Accordion, ChipGroup
 │   ├── layout/                       # Header, MenuOverlay, Footer, ConditionalFooter, SloganBand, Wordmark, ThemeToggle
 │   ├── motion/                       # SmoothScroll, Reveal, SplitReveal, ScrollText, StrikeList,
 │   │                                 # FlowingLine, ProjectStack, SurfaceTransition, FooterReveal,
@@ -58,22 +60,31 @@ src/
 │   │   │                             # ProjectIndexOverlay, NextCategoryBanner, WorkClosingCta
 │   │   ├── work.content.ts           # All Work copy, labels, and section headings
 │   │   └── index.ts                  # Exports Work components and content
-│   └── about/
-│       ├── sections/                 # AboutHero, TheName, MeetFounder, VisionMissionGoal,
-│       │                             # OurValues, WhyUs, WiderNetwork, WhereWeWork,
-│       │                             # TheStandard, AboutClosingCta
-│       ├── about.content.ts          # All About copy, founder chapters, values, pillars, and reach data
-│       └── index.ts                  # Exports About sections and content
+│   ├── about/
+│   │   ├── sections/                 # AboutHero, TheName, MeetFounder, VisionMissionGoal,
+│   │   │                             # OurValues, WhyUs, WiderNetwork, WhereWeWork,
+│   │   │                             # TheStandard, AboutClosingCta
+│   │   ├── about.content.ts          # All About copy, founder chapters, values, pillars, and reach data
+│   │   └── index.ts                  # Exports About sections and content
+│   └── contact/
+│       ├── components/               # ContactView, ContactInfoColumn, ProjectRequestForm,
+│       │                             # BudgetPicker, ThankYouView
+│       ├── contact.content.ts        # All Contact copy, BUDGET_RANGES (USD/NGN), options, mini FAQs
+│       ├── countries.ts              # Lazy-loaded searchable country list
+│       └── index.ts                  # Exports Contact components and content
 ├── content/
 │   ├── site.ts                       # Studio name, tagline, slogan, contact placeholders, socials, founder profile
 │   ├── navigation.ts                 # Header & menu links, footer columns
-│   ├── packages.ts                   # Packages, USD/NGN pricing, and "Find your fit" matcher rules
+│   ├── packages.ts                   # Single source of truth for all 7 packages (including Custom Package), USD/NGN pricing, and matcher rules
 │   └── projects.ts                   # Single source of truth for 3 categories and 12 projects
 ├── lib/
 │   ├── animation/gsap.ts             # Single registration point for GSAP + plugins
+│   ├── email/contact-emails.ts       # Studio notification + client confirmation HTML emails (Resend + dev log fallback) & saveLead()
+│   ├── schemas/contact.ts            # Shared client/server Zod schemas, getPackageDefaults(), evaluateBudgetFit()
 │   ├── analytics.ts                  # Typed track(eventName, props?) helper
 │   ├── fonts.ts                      # IBM Plex Mono (next/font/google) + Aeonik (next/font/local)
-│   ├── seo.ts                        # Metadata, Organization, Person (founder), & BreadcrumbList JSON-LD
+│   ├── rate-limit.ts                 # 5 req/hour per IP rate limiter (Upstash Redis REST + in-memory fallback)
+│   ├── seo.ts                        # Metadata, Organization, Person, ContactPage, & BreadcrumbList JSON-LD
 │   └── utils.ts                      # Class merging helpers
 ├── hooks/                            # useMotionPreference, useMediaQuery, useScrollVelocity
 ├── store/
@@ -88,7 +99,8 @@ src/
 │   └── icons/                        # Material Symbols (outlined, weight 300) SVGs
 ├── types/
 │   ├── global.d.ts
-│   └── work.ts                       # WorkCategory, ProjectItem, ProjectMediaSlot interfaces
+│   ├── work.ts                       # WorkCategory, ProjectItem, ProjectMediaSlot interfaces
+│   └── contact.ts                    # ContactFormValues, BudgetRangeDefinition, BudgetFitAssessment types
 └── tests/                            # Vitest unit tests & Playwright e2e tests
 ```
 

@@ -12,7 +12,9 @@ test.describe('Iséoluwa Work Section E2E Flow', () => {
 
     await expect(brandingPanel).toHaveAttribute('data-active', 'true');
     await expect(page.getByTestId('work-swiper-counter')).toHaveText('01 / 03');
+    await expect(page.getByTestId('flowing-line-canvas').first()).toBeVisible();
 
+    await brandingPanel.focus();
     await page.keyboard.press('ArrowRight');
     await expect(websitesPanel).toHaveAttribute('data-active', 'true');
     await expect(page.getByTestId('work-swiper-counter')).toHaveText('02 / 03');

@@ -45,7 +45,9 @@ test.describe('Iséoluwa Home Page Smoke Suite', () => {
     const resultTitle = page.locator('#matcher-result-title');
     await expect(resultTitle).toHaveText('Launch Starter');
 
-    const ctaLink = page.locator('#package-matcher a[href="/contact?package=launch-starter"]');
+    const ctaLink = page.locator(
+      '#package-matcher a[href="/contact?package=launch-starter&source=home-matcher"]',
+    );
     await expect(ctaLink).toContainText('Talk about Launch Starter');
   });
 });

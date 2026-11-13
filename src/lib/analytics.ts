@@ -22,7 +22,19 @@ export type AnalyticsEventName =
   | 'about_booking_clicked'
   | 'about_social_clicked'
   | 'about_chapter_viewed'
-  | 'about_cta_clicked';
+  | 'about_cta_clicked'
+  | 'contact_form_started'
+  | 'contact_step_completed'
+  | 'contact_package_prefilled'
+  | 'contact_budget_selected'
+  | 'contact_submit_attempted'
+  | 'contact_submit_succeeded'
+  | 'contact_submit_failed'
+  | 'contact_whatsapp_clicked'
+  | 'contact_booking_clicked'
+  | 'contact_email_copied'
+  | 'package_cta_clicked'
+  | 'custom_package_clicked';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 

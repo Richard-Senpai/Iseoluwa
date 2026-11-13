@@ -26,6 +26,14 @@ describe('Package matcher ("Find your fit") logic', () => {
     expect(resolvePackageMatch('website', 'refresh')?.slug).toBe('build-only');
     expect(resolvePackageMatch('marketing', 'scale')?.slug).toBe('growth-retainer');
   });
+
+  it('maps "other" ("Something else or not sure") to Custom Package with source=home-matcher', () => {
+    const result = resolvePackageMatch('other', null);
+    expect(result?.slug).toBe('custom');
+    expect(result?.packageName).toBe('Custom Package');
+    expect(result?.href).toBe('/contact?package=custom&source=home-matcher');
+    expect(result?.ctaLabel).toBe('Tell us what you need');
+  });
 });
 
 describe('Content integrity', () => {

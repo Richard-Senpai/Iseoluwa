@@ -109,42 +109,116 @@ export function Packages() {
           </div>
         </div>
 
-        {/* Three package columns separated by hairlines */}
-        <div className="grid grid-cols-1 divide-y divide-line border-y border-line lg:grid-cols-3 lg:divide-x lg:divide-y-0">
-          {PACKAGES_CONTENT.packages.map((pkg) => (
-            <article
-              key={pkg.slug}
-              className="flex flex-col justify-between gap-10 py-8 lg:px-8 lg:py-10 lg:first:pl-0 lg:last:pr-0"
-            >
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-label-mono text-ink-muted">{pkg.number}</span>
-                  <span className="text-label-mono text-ink-muted">
-                    {PACKAGES_CONTENT.timelinePrefix} · {pkg.timelineLabel}
-                  </span>
-                </div>
-                <h3 className="text-heading-m text-ink">{pkg.name}</h3>
-                <p className="text-body max-w-[44ch] text-ink-muted">{pkg.description}</p>
-              </div>
+        {/* Four package columns separated by hairlines (4th is inverse Custom Package) */}
+        <div className="grid grid-cols-1 divide-y divide-line border-y border-line md:grid-cols-2 lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+          {PACKAGES_CONTENT.packages.map((pkg) => {
+            const isCustom = pkg.isCustom === true;
+            return (
+              <article
+                key={pkg.slug}
+                className={cn(
+                  'flex flex-col justify-between gap-10 p-8 lg:py-10',
+                  isCustom
+                    ? 'bg-surface-inverse text-ink-on-inverse'
+                    : 'lg:first:pl-0',
+                )}
+              >
+                <div className="space-y-5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className={cn(
+                        'text-label-mono',
+                        isCustom ? 'text-accent' : 'text-ink-muted',
+                      )}
+                    >
+                      {isCustom && pkg.badgeLabel ? pkg.badgeLabel : pkg.number}
+                    </span>
+                    <span
+                      className={cn(
+                        'text-label-mono',
+                        isCustom ? 'text-inverse-ink/70' : 'text-ink-muted',
+                      )}
+                    >
+                      {PACKAGES_CONTENT.timelinePrefix} · {pkg.timelineLabel}
+                    </span>
+                  </div>
 
-              <div className="space-y-6 border-t border-line pt-6">
-                <p className="text-display-l text-ink">{pkg.prices[currency]}</p>
-                <TransitionLink
-                  href={`/contact?package=${pkg.slug}`}
-                  onClick={() =>
-                    track('start_project_click', {
-                      location: 'package_column',
-                      package: pkg.slug,
-                    })
-                  }
-                  className="link-underline text-btn text-ink"
+                  <div className="space-y-2">
+                    <h3
+                      className={cn(
+                        'text-heading-m',
+                        isCustom ? 'text-inverse-ink' : 'text-ink',
+                      )}
+                    >
+                      {pkg.name}
+                    </h3>
+                    {pkg.tagline && (
+                      <p
+                        className={cn(
+                          'font-sans text-lg font-medium tracking-tight',
+                          isCustom ? 'text-inverse-ink' : 'text-ink',
+                        )}
+                      >
+                        {pkg.tagline}
+                      </p>
+                    )}
+                  </div>
+
+                  <p
+                    className={cn(
+                      'text-body max-w-[44ch]',
+                      isCustom ? 'text-inverse-ink/80' : 'text-ink-muted',
+                    )}
+                  >
+                    {pkg.description}
+                  </p>
+                </div>
+
+                <div
+                  className={cn(
+                    'space-y-6 border-t pt-6',
+                    isCustom ? 'border-inverse-ink/20' : 'border-line',
+                  )}
                 >
-                  <span>{pkg.name}</span>
-                  <Icon name="arrow_outward" size={20} />
-                </TransitionLink>
-              </div>
-            </article>
-          ))}
+                  <p
+                    className={cn(
+                      'text-display-l',
+                      isCustom ? 'text-inverse-ink' : 'text-ink',
+                    )}
+                  >
+                    {pkg.prices[currency]}
+                  </p>
+                  <TransitionLink
+                    href={pkg.href}
+                    onClick={() => {
+                      track('start_project_click', {
+                        location: 'package_column',
+                        package: pkg.slug,
+                      });
+                      track('package_cta_clicked', {
+                        package: pkg.slug,
+                        currency,
+                      });
+                      if (isCustom) {
+                        track('custom_package_clicked', {
+                          location: 'home_packages_grid',
+                        });
+                      }
+                    }}
+                    className={cn(
+                      'inline-flex items-center justify-between gap-3 rounded-pill px-5 py-3 text-sm font-medium transition-colors duration-200',
+                      isCustom
+                        ? 'bg-inverse-ink text-inverse-bg hover:opacity-90'
+                        : 'border border-line text-ink hover:border-ink',
+                    )}
+                  >
+                    <span>{pkg.ctaLabel}</span>
+                    <Icon name="arrow_outward" size={20} />
+                  </TransitionLink>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
         {/* Single-service note + See all packages link */}
@@ -255,17 +329,27 @@ export function Packages() {
 
                   <div>
                     <Button
-                      href={`/contact?package=${recommendation.slug}`}
+                      href={recommendation.href}
                       variant="primary"
-                      onClick={() =>
+                      onClick={() => {
                         track('matcher_button_click', {
                           package: recommendation.slug,
                           currency,
-                        })
-                      }
+                        });
+                        track('package_cta_clicked', {
+                          package: recommendation.slug,
+                          source: 'home-matcher',
+                        });
+                        if (recommendation.slug === 'custom') {
+                          track('custom_package_clicked', {
+                            location: 'home_matcher',
+                          });
+                        }
+                      }}
                       className="w-full sm:w-auto"
                     >
-                      {`${recommendation.ctaPrefix} ${recommendation.packageName}`}
+                      {recommendation.ctaLabel ??
+                        `${recommendation.ctaPrefix} ${recommendation.packageName}`}
                     </Button>
                   </div>
                 </div>
