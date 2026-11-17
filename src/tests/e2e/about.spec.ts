@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
-test.describe('About Page (/about) — Pinned TeamStory, Portraits, Rail, Overflow & JSON-LD', () => {
-  test('renders all four team members in server HTML, rail items set aria-current and scroll, portraits have alt text, and JSON-LD contains both founders', async ({
+test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on Desktop & Mobile', () => {
+  test('renders all four team tiles in the Founder section and switches heading, portrait, and highlighted tile dynamically on desktop and mobile', async ({
     page,
   }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
@@ -17,13 +17,14 @@ test.describe('About Page (/about) — Pinned TeamStory, Portraits, Rail, Overfl
     // 2. Single h1 with hero headline & updated sections
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('#the-name')).toContainText('01 / THE NAME');
+    await expect(page.locator('#the-founder h2')).toContainText('Meet Iséoluwa');
     await expect(page.locator('#what-drives-us')).toContainText('03 / WHAT DRIVES US');
     await expect(page.locator('#why-us')).toContainText('Built by designers and engineers.');
     await expect(page.locator('#the-network')).toContainText(
       'Every project is led by our founders and checked against the same standard.',
     );
 
-    // 3. Portrait images have exact alt text for all four members
+    // 3. Portrait images have exact alt text for all four members inside the single portrait frame
     const expectedAlts = [
       'Portrait of Ojedayo Richard Iseoluwa, Founder at Iséoluwa',
       'Portrait of Daniel Oshinaike, Co-Founder at Iséoluwa',
@@ -31,43 +32,46 @@ test.describe('About Page (/about) — Pinned TeamStory, Portraits, Rail, Overfl
       'Portrait of Jessica Omotayo, Marketer and Social Media Manager at Iséoluwa',
     ];
     for (const altText of expectedAlts) {
-      const imgs = page.locator(`img[alt="${altText}"]`);
-      expect(await imgs.count()).toBeGreaterThanOrEqual(1);
+      const imgs = page.locator(`#the-founder img[alt="${altText}"]`);
+      await expect(imgs).toHaveCount(1);
     }
 
-    // 4. Desktop rail has four items and clicking one sets aria-current and scrolls
-    const rail = page.getByTestId('team-rail');
-    await expect(rail).toBeVisible();
-    const railButtons = rail.locator('button');
-    await expect(railButtons).toHaveCount(4);
+    // 4. Clicking or scrolling to tile 02 (The designer) dynamically updates "Meet Iséoluwa" -> "Meet Daniel" and switches the active portrait & tile
+    await expect(page.getByTestId('team-portrait-layer-iseoluwa')).toHaveClass(/opacity-100/);
+    await expect(page.getByTestId('team-portrait-layer-daniel')).toHaveClass(/opacity-0/);
 
-    await expect(page.getByTestId('team-rail-item-iseoluwa')).toHaveAttribute(
-      'aria-current',
-      'step',
-    );
-    await expect(page.getByTestId('team-counter')).toContainText('01 / 04');
-    await expect(page.getByTestId('team-section-label')).toContainText('02 / FOUNDER');
+    await page.getByTestId('team-member-card-daniel').click();
+    await expect(page.locator('#the-founder h2')).toContainText('Meet Daniel');
+    await expect(page.getByTestId('team-section-label')).toContainText('02 / CO-FOUNDER');
+    await expect(page.getByTestId('team-counter')).toContainText('02 / 04');
+    await expect(page.getByTestId('team-portrait-layer-daniel')).toHaveClass(/opacity-100/);
+    await expect(page.getByTestId('team-portrait-layer-iseoluwa')).toHaveClass(/opacity-0/);
 
-    const initialScrollY = await page.evaluate(() => window.scrollY);
+    // 5. Clicking rail pill 03 (The developer) updates to "Meet Maleek"
     await page.getByTestId('team-rail-item-maleek').click();
-    await page.waitForTimeout(350);
-
-    await expect(page.getByTestId('team-rail-item-maleek')).toHaveAttribute(
-      'aria-current',
-      'step',
-    );
-    await expect(page.getByTestId('team-counter')).toContainText('03 / 04');
+    await expect(page.locator('#the-founder h2')).toContainText('Meet Maleek');
     await expect(page.getByTestId('team-section-label')).toContainText('02 / DEVELOPER');
-    const afterClickScrollY = await page.evaluate(() => window.scrollY);
-    expect(afterClickScrollY).toBeGreaterThan(initialScrollY);
+    await expect(page.getByTestId('team-counter')).toContainText('03 / 04');
+    await expect(page.getByTestId('team-portrait-layer-maleek')).toHaveClass(/opacity-100/);
 
-    // 5. Reach me buttons and email copy still work
+    // 6. Verify mobile viewport (390x844) shows the exact same dynamic section and switches dynamically
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/about');
+    await expect(page.getByTestId('team-pinned-stage')).toBeVisible();
+    await expect(page.locator('#the-founder h2')).toContainText('Meet Iséoluwa');
+
+    await page.getByTestId('team-member-card-jessica').click();
+    await expect(page.locator('#the-founder h2')).toContainText('Meet Jessica');
+    await expect(page.getByTestId('team-section-label')).toContainText('02 / MARKETING');
+    await expect(page.getByTestId('team-portrait-layer-jessica')).toHaveClass(/opacity-100/);
+
+    // 7. Reach me buttons and email copy still work
     const copyBtn = page.getByTestId('founder-copy-email');
     await copyBtn.scrollIntoViewIfNeeded();
     await copyBtn.click();
     await expect(copyBtn).toContainText('Copied');
 
-    // 6. JSON-LD contains Organization with both founders (Ojedayo Richard Iseoluwa & Daniel Oshinaike) and employees
+    // 8. JSON-LD contains Organization with both founders
     const jsonLdFounders = await page.evaluate(() => {
       const scripts = Array.from(
         document.querySelectorAll<HTMLScriptElement>('script[type="application/ld+json"]'),
@@ -98,13 +102,13 @@ test.describe('About Page (/about) — Pinned TeamStory, Portraits, Rail, Overfl
         const issues: string[] = [];
         const section = document.getElementById('the-founder');
         if (section && section.scrollWidth > section.clientWidth + 1) {
-          issues.push(`#the-founder horizontal overflow by ${section.scrollWidth - section.clientWidth}px`);
+          issues.push(
+            `#the-founder horizontal overflow by ${section.scrollWidth - section.clientWidth}px`,
+          );
         }
 
         const giantNames = Array.from(
-          document.querySelectorAll<HTMLElement>(
-            '[data-testid^="team-giant-name-"], [data-testid^="team-stacked-giant-name-"]',
-          ),
+          document.querySelectorAll<HTMLElement>('[data-testid^="team-giant-name-"]'),
         );
         for (const el of giantNames) {
           const parent = el.parentElement;
@@ -122,16 +126,10 @@ test.describe('About Page (/about) — Pinned TeamStory, Portraits, Rail, Overfl
     }
   });
 
-  test('reduced motion shows the unpinned stacked team layout with all four members', async ({
-    page,
-  }) => {
+  test('reduced motion keeps all four member tiles visible and unpinned', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/about');
-
-    const stackedLayout = page.getByTestId('team-stacked-layout');
-    await expect(stackedLayout).toBeVisible();
-    await expect(page.getByTestId('team-pinned-stage')).toBeHidden();
 
     for (const id of ['iseoluwa', 'daniel', 'maleek', 'jessica']) {
       await expect(page.getByTestId(`team-member-card-${id}`)).toBeVisible();

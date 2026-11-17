@@ -4,7 +4,7 @@ import type { TeamMember } from '@/types/team';
 
 /**
  * Single source of truth for the Iséoluwa team (`src/content/team.ts`).
- * Order matters: Founder -> Co-Founder -> Developer -> Marketer and Social Media Manager.
+ * Order matters: Founder -> Co-Founder (Designer) -> Developer -> Marketer.
  * All team copy lives here, never hard-coded in components.
  */
 export const team: readonly TeamMember[] = [
@@ -15,6 +15,10 @@ export const team: readonly TeamMember[] = [
     name: 'Ojedayo Richard Iseoluwa',
     displayName: 'iséoluwa',
     role: 'Founder',
+    tileLabel: 'The founder',
+    tileSummary:
+      'Ojedayo Richard Iseoluwa builds websites end to end, shapes the product experience, and leads brand direction — starting Iséoluwa so businesses get one team that handles brand, build, and growth with equal care.',
+    focusSummary: 'Brand · Web · Growth',
     sectionLabel: 'FOUNDER',
     railLabel: '01 ISÉOLUWA · FOUNDER',
     bio: [
@@ -36,7 +40,6 @@ export const team: readonly TeamMember[] = [
       placeholderLabel: 'PORTRAIT 4:5',
     },
     links: {
-      // Personal links rendered only when populated; founder portfolio & studio contacts are also in Reach Me block
       portfolio: SITE_CONTENT.founder.portfolioUrl,
       // TODO: Add founder personal social links when ready
       email: '',
@@ -91,6 +94,10 @@ export const team: readonly TeamMember[] = [
     name: 'Daniel Oshinaike',
     displayName: 'Daniel',
     role: 'Co-Founder',
+    tileLabel: 'The designer',
+    tileSummary:
+      'Daniel Oshinaike is a Brand Architect, Strategic Brand Designer, and Creative Director leading brand strategy and creative direction at Iséoluwa, shaping identities that businesses can grow into.',
+    focusSummary: 'Brand Identity · Creative Direction',
     sectionLabel: 'CO-FOUNDER',
     railLabel: '02 DANIEL · CO-FOUNDER',
     bio: [
@@ -137,6 +144,10 @@ export const team: readonly TeamMember[] = [
     name: 'Abdulmaleek Asimiyu',
     displayName: 'Maleek',
     role: 'Developer',
+    tileLabel: 'The developer',
+    tileSummary:
+      'Abdulmaleek Asimiyu turns approved designs into fast, reliable websites and web applications, working closely with the design team so what is designed is exactly what gets built.',
+    focusSummary: 'Websites · Web Apps · Clean Code',
     sectionLabel: 'DEVELOPER',
     railLabel: '03 MALEEK · DEVELOPER',
     // TODO: confirm with the team member
@@ -178,6 +189,10 @@ export const team: readonly TeamMember[] = [
     name: 'Jessica Omotayo',
     displayName: 'Jessica',
     role: 'Marketer and Social Media Manager',
+    tileLabel: 'The marketer',
+    tileSummary:
+      'Jessica Omotayo helps brands find their audience, plan content people want to follow, and turn attention into customers through social media and campaigns — making sure every brand is heard as clearly as it looks.',
+    focusSummary: 'Social Media · Content · Campaigns',
     sectionLabel: 'MARKETING',
     railLabel: '04 JESSICA · MARKETING',
     // TODO: confirm with the team member
@@ -223,7 +238,7 @@ export const TEAM_STORY_CONTENT = {
   skipTargetId: 'what-drives-us',
   cursorLabel: 'Hello',
   railAriaLabel: 'Team members',
-  chaptersAriaLabel: 'Founder story chapters',
+  chaptersAriaLabel: 'Team story tiles',
   focusHeadingLabel: 'FOCUS',
   founderHeadingPrefix: 'Meet',
   linkLabels: {

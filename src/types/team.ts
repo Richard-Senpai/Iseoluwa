@@ -54,6 +54,9 @@ export interface TeamMember {
   name: string;
   displayName: string;
   role: string;
+  tileLabel: string;
+  tileSummary: string;
+  focusSummary: string;
   sectionLabel: TeamMemberSectionLabel;
   railLabel: string;
   bio: readonly string[];
