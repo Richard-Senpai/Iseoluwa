@@ -45,3 +45,22 @@ Swapping in real client work is a data-only change:
 1. Place the client's exported WebP/AVIF images and `.webm`/`.mp4` loops under `public/media/work/<slug>/`.
 2. In `src/content/projects.ts`, update the project entry's `slug`, `title`, `year`, `client`, `services`, `summary`, `challenge`, `approach`, `outcome`, `result`, and `media` paths, and set `isConcept: false`.
 3. Once all concept projects are replaced (or whenever desired), flip `SHOW_CONCEPT_BADGE = false` and `SHOW_PHOTO_CREDITS = false` in `src/config/site.ts`.
+
+---
+
+## 4. Team Portraits (`public/media/team/` & `pnpm team:images`)
+
+Original team portraits are stored in `assets/originals/team/` (outside `public/`, so they are never served raw) and processed into `public/media/team/` via `pnpm team:images` (`scripts/team-images.mjs` using `sharp`):
+
+| # | Member | Role | Original File (`assets/originals/team/`) | Optimised Output (`public/media/team/`) | Focal Point | Status |
+|---|---|---|---|---|---|---|
+| 1 | **Ojedayo Richard Iseoluwa** | Founder | `iseoluwa-portrait.png` | `iseoluwa-portrait.{webp,avif}`, `-800.{webp,avif}`, `-1600.{webp,avif}` | `{ x: 0.5, y: 0.42 }` | Found & processed |
+| 2 | **Daniel Oshinaike** | Co-Founder | `daniel-portrait.png` | `daniel-portrait.{webp,avif}`, `-800.{webp,avif}`, `-1600.{webp,avif}` | `{ x: 0.5, y: 0.48 }` | Found & processed |
+| 3 | **Abdulmaleek Asimiyu** | Developer | `maleek-portrait.png` | `maleek-portrait.{webp,avif}`, `-800.{webp,avif}`, `-1600.{webp,avif}` | `{ x: 0.48, y: 0.44 }` | Found & processed |
+| 4 | **Jessica Omotayo** | Marketer and Social Media Manager | `jessica-portrait.png` | `jessica-portrait.{webp,avif}`, `-800.{webp,avif}`, `-1600.{webp,avif}` | `{ x: 0.5, y: 0.38 }` | Found & processed |
+
+To add or replace a team portrait:
+1. Place the high-resolution source portrait in `assets/originals/team/<id>-portrait.png` (or `.jpg`/`.webp`).
+2. Adjust the member's `focalPoint` in `scripts/team-images.mjs` and `src/content/team.ts` if needed.
+3. Run `pnpm team:images` to regenerate the 4:5 cropped WebP and AVIF files (`1600×2000` and `800×1000`, capped at source resolution without upscaling) and update the base64 blur placeholders in `src/content/team-blur.ts`.
+

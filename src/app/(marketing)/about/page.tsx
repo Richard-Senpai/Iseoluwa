@@ -3,7 +3,7 @@ import {
   ABOUT_CONTENT,
   AboutHero,
   TheName,
-  MeetFounder,
+  TeamStory,
   VisionMissionGoal,
   OurValues,
   WhyUs,
@@ -45,8 +45,8 @@ export default function AboutPage() {
       {/* 2. The Name — 01 / THE NAME */}
       <TheName />
 
-      {/* 3. Meet Iséoluwa — 02 / THE FOUNDER (with thick FlowingLine #2 + Reach me block) */}
-      <MeetFounder />
+      {/* 3. TeamStory — 02 / FOUNDER -> CO-FOUNDER -> DEVELOPER -> MARKETING (with thick FlowingLine #2 + Reach me block) */}
+      <TeamStory />
 
       {/* 4. Vision, Mission, and Goal — 03 / WHAT DRIVES US (inverse surface) */}
       <VisionMissionGoal />

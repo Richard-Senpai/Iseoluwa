@@ -172,3 +172,18 @@ To enable Aeonik in production:
 - `src/features/concepts/` (`BrandBoard.tsx`, `BrowserFrame.tsx`, `SocialGrid.tsx`, `concepts.config.ts`) and dev-only route `src/app/dev/concepts/page.tsx` (`notFound()` in production) compose 36 frames across the 12 concept projects.
 - `pnpm concepts:export` (`scripts/export-concepts.mjs`) uses Playwright to export all 36 frames as WebP (`2400×1350` 16:9 and `1600×2000` 4:5) and 3 WebM video loops into `public/media/concepts/<slug>/`.
 
+---
+
+## 7. Team Section (`TeamStory.tsx`, `src/content/team.ts`, `src/types/team.ts`)
+
+- **Data & Types**: `src/types/team.ts` and `src/content/team.ts` (`team` / `TEAM`) serve as the single source of truth for the four team members (`iseoluwa`, `daniel`, `maleek`, `jessica`), their roles, section labels (`FOUNDER`, `CO-FOUNDER`, `DEVELOPER`, `MARKETING`), bios, focus tags, 4:5 portraits, personal links, and the founder's 4 chapters and pull quote.
+- **Pinned Desktop Scene (`TeamStory.tsx`)**:
+  - Pins on viewports `>= 1024px` (`gsap.matchMedia()`) and scrubs through four member windows and three reversible handovers (`0.25–0.31`, `0.50–0.56`, `0.75–0.81`).
+  - During each handover, the thick `FlowingLine` sweeps across the stage while the outgoing portrait wipes out left (`clip-path: inset(0% X% 0% 0%)`) and the incoming portrait wipes in from the right (`clip-path: inset(0% 0% 0% Y%)`).
+  - Each portrait transitions from `grayscale(100%)` to `filter: none` across its beat (applied strictly to the portrait image layer, never to text or UI).
+  - The member rail (`01 ISÉOLUWA · FOUNDER` ... `04 JESSICA · MARKETING`) highlights the active member with `border-line-accent` and `aria-current="step"`, and scrolls smoothly via Lenis (`useLenis()`) when clicked.
+  - A `Skip team` link is the first focusable element in the section, jumping directly to `#what-drives-us`.
+- **Mobile, Reduced Motion, and SSR Fallback**:
+  - Renders all four members in order as unpinned vertical blocks with an in-page member rail and a single `FlowingLine` at the top of the section.
+
+

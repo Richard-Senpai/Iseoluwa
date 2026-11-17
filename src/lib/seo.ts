@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { getActiveSocials, SITE_CONTENT } from '@/content/site';
+import { TEAM } from '@/content/team';
+import type { TeamMember } from '@/types/team';
 
 export function buildMetadata(overrides?: {
   title?: string;
@@ -37,10 +39,46 @@ export function buildMetadata(overrides?: {
   };
 }
 
+function buildTeamMemberPersonJsonLd(member: TeamMember): Record<string, unknown> {
+  const linkUrls = [
+    member.links.portfolio,
+    member.links.linkedin,
+    member.links.instagram,
+    member.links.x,
+    member.links.github,
+    member.links.behance,
+  ].filter((val): val is string => Boolean(val && val.trim().length > 0));
+
+  if (member.id === 'iseoluwa') {
+    const activeFounderSocials = getActiveSocials(SITE_CONTENT.founder.socials).map((s) => s.href);
+    activeFounderSocials.forEach((href) => {
+      if (!linkUrls.includes(href)) {
+        linkUrls.push(href);
+      }
+    });
+  }
+
+  return {
+    '@type': 'Person',
+    name: member.name,
+    alternateName: member.displayName,
+    jobTitle: member.role,
+    image: member.portrait.src ? `${SITE_CONTENT.seo.siteUrl}${member.portrait.src}` : undefined,
+    sameAs: linkUrls,
+  };
+}
+
 export function buildOrganizationJsonLd(): Record<string, unknown> {
   const sameAs = getActiveSocials(SITE_CONTENT.socials)
     .filter((s) => s.id !== 'whatsapp')
     .map((s) => s.href);
+
+  const founders = TEAM.filter((m) => m.id === 'iseoluwa' || m.id === 'daniel').map(
+    buildTeamMemberPersonJsonLd,
+  );
+  const employees = TEAM.filter((m) => m.id === 'maleek' || m.id === 'jessica').map(
+    buildTeamMemberPersonJsonLd,
+  );
 
   return {
     '@context': 'https://schema.org',
@@ -53,6 +91,8 @@ export function buildOrganizationJsonLd(): Record<string, unknown> {
     description: SITE_CONTENT.seo.defaultDescription,
     areaServed: ['Africa', 'Europe', 'Americas'],
     sameAs,
+    founder: founders,
+    employee: employees,
     contactPoint: [
       {
         '@type': 'ContactPoint',

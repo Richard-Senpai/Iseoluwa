@@ -50,7 +50,7 @@ export const ABOUT_CONTENT = {
   seo: {
     title: 'About Iseoluwa | Our Story, Vision and Founder',
     description:
-      'Meet the studio that treats every project as work done with care. Learn our vision, mission, values, and the founder behind Iseoluwa.',
+      'Meet the studio that treats every project as work done with care. Learn our vision, mission, values, and the founders and team behind Iseoluwa.',
     path: '/about',
   },
 
@@ -233,7 +233,7 @@ export const ABOUT_CONTENT = {
       },
       {
         number: '03',
-        headline: 'Built by an engineer and designer.',
+        headline: 'Built by designers and engineers.',
         body: 'The people who design your site are the same people who build it.',
       },
       {
@@ -247,7 +247,7 @@ export const ABOUT_CONTENT = {
   widerNetwork: {
     sectionLabel: '06 / THE NETWORK',
     headline: 'A small core, a trusted network.',
-    body: 'We work with a vetted network of designers, developers, and marketers, which lets us deliver quickly without losing quality. Every project is led by the founder and checked against the same standard.',
+    body: 'We work with a vetted network of designers, developers, and marketers, which lets us deliver quickly without losing quality. Every project is led by our founders and checked against the same standard.',
     rolesLine: ['DESIGNERS', 'DEVELOPERS', 'MARKETERS', '[MORE SOON]'],
     // Do not invent team members. Render profile cards only when entries exist.
     team: [] as TeamMemberProfile[],

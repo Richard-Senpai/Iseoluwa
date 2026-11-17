@@ -81,7 +81,7 @@ export function TheName() {
     <section
       id="the-name"
       ref={sectionRef}
-      className="relative border-t border-line py-[var(--section-pad-y)]"
+      className="relative overflow-hidden border-t border-line py-[var(--section-pad-y)]"
     >
       <Container className="space-y-16 md:space-y-24">
         <div className="flex flex-wrap items-center justify-between gap-4">

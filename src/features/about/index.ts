@@ -1,7 +1,7 @@
 export { ABOUT_CONTENT } from './about.content';
 export { AboutHero } from './sections/AboutHero';
 export { TheName } from './sections/TheName';
-export { MeetFounder } from './sections/MeetFounder';
+export { TeamStory, MeetFounder } from './sections/TeamStory';
 export { VisionMissionGoal } from './sections/VisionMissionGoal';
 export { OurValues } from './sections/OurValues';
 export { WhyUs } from './sections/WhyUs';

@@ -209,7 +209,7 @@ export const HOME_CONTENT: HomeContent = {
       },
       {
         number: '03',
-        title: 'Built by an engineer and designer.',
+        title: 'Built by designers and engineers.',
         description: 'The people who design your site are the same people who build it.',
       },
       {

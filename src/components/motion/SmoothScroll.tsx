@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import Lenis from 'lenis';
 import { gsap, ScrollTrigger } from '@/lib/animation/gsap';
 import { MOTION } from '@/config/motion';
@@ -11,6 +11,12 @@ export interface SmoothScrollProps {
   children: ReactNode;
 }
 
+const LenisContext = createContext<Lenis | null>(null);
+
+export function useLenis(): Lenis | null {
+  return useContext(LenisContext);
+}
+
 /**
  * Single Lenis instance connected to GSAP ScrollTrigger and driven by `gsap.ticker`
  * (Tech Stack Section 4 Rule 2). Disabled when `prefers-reduced-motion` is active.
@@ -18,9 +24,11 @@ export interface SmoothScrollProps {
 export function SmoothScroll({ children }: SmoothScrollProps) {
   const { reducedMotion } = useMotionPreference();
   const setScrollVelocity = useUIStore((s) => s.setScrollVelocity);
+  const [lenisInstance, setLenisInstance] = useState<Lenis | null>(null);
 
   useEffect(() => {
     if (reducedMotion) {
+      setLenisInstance(null);
       setScrollVelocity(0);
       return;
     }
@@ -30,6 +38,8 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
       wheelMultiplier: MOTION.lenis.wheelMultiplier,
       smoothWheel: true,
     });
+
+    setLenisInstance(lenis);
 
     lenis.on('scroll', (e: { velocity: number }) => {
       ScrollTrigger.update();
@@ -46,9 +56,10 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     return () => {
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
+      setLenisInstance(null);
       setScrollVelocity(0);
     };
   }, [reducedMotion, setScrollVelocity]);
 
-  return <>{children}</>;
+  return <LenisContext.Provider value={lenisInstance}>{children}</LenisContext.Provider>;
 }

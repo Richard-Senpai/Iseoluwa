@@ -34,7 +34,12 @@ export type AnalyticsEventName =
   | 'contact_booking_clicked'
   | 'contact_email_copied'
   | 'package_cta_clicked'
-  | 'custom_package_clicked';
+  | 'custom_package_clicked'
+  | 'team_member_viewed'
+  | 'team_rail_clicked'
+  | 'team_skip_clicked'
+  | 'team_cta_clicked'
+  | 'team_link_clicked';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 
