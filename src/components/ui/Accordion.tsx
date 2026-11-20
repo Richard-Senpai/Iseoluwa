@@ -12,15 +12,17 @@ export interface AccordionItemData {
 }
 
 export interface AccordionProps {
-  items: AccordionItemData[];
+  items: readonly AccordionItemData[];
+  idPrefix?: string;
   className?: string;
 }
 
 /**
  * Accessible FAQ Accordion with hairline dividers, `add` / `remove` icons,
- * and smooth expand/collapse using CSS grid rows.
+ * and smooth expand/collapse using CSS grid rows (zero opacity fade on readable text).
+ * All questions and answers remain present in the server-rendered HTML.
  */
-export function Accordion({ items, className }: AccordionProps) {
+export function Accordion({ items, idPrefix = 'accordion', className }: AccordionProps) {
   const [openId, setOpenId] = useState<string | null>(items[0]?.id ?? null);
 
   const handleToggle = (id: string, question: string) => {
@@ -35,8 +37,8 @@ export function Accordion({ items, className }: AccordionProps) {
     <div className={cn('divide-y divide-line border-y border-line', className)}>
       {items.map((item, idx) => {
         const isOpen = openId === item.id;
-        const panelId = `accordion-panel-${item.id}`;
-        const triggerId = `accordion-trigger-${item.id}`;
+        const panelId = `${idPrefix}-panel-${item.id}`;
+        const triggerId = `${idPrefix}-trigger-${item.id}`;
         const numberLabel = String(idx + 1).padStart(2, '0');
 
         return (
@@ -65,9 +67,10 @@ export function Accordion({ items, className }: AccordionProps) {
               id={panelId}
               role="region"
               aria-labelledby={triggerId}
+              aria-hidden={!isOpen}
               className={cn(
-                'grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
-                isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0',
+                'grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]',
+                isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]',
               )}
             >
               <div className="overflow-hidden">

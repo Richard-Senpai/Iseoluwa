@@ -54,16 +54,20 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
     await expect(page.getByTestId('team-counter')).toContainText('03 / 04');
     await expect(page.getByTestId('team-portrait-layer-maleek')).toHaveClass(/opacity-100/);
 
-    // 6. Verify mobile viewport (390x844) shows the exact same dynamic section and switches dynamically
+    // 6. Verify mobile viewport (390x844) shows large portrait + only the single active role card (not stacked) and switches dynamically
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/about');
     await expect(page.getByTestId('team-pinned-stage')).toBeVisible();
     await expect(page.locator('#the-founder h2')).toContainText('Meet Iséoluwa');
+    await expect(page.getByTestId('team-member-card-iseoluwa')).toBeVisible();
+    await expect(page.getByTestId('team-member-card-jessica')).toBeHidden();
 
-    await page.getByTestId('team-member-card-jessica').click();
+    await page.getByTestId('team-rail-item-jessica').click();
     await expect(page.locator('#the-founder h2')).toContainText('Meet Jessica');
     await expect(page.getByTestId('team-section-label')).toContainText('02 / MARKETING');
     await expect(page.getByTestId('team-portrait-layer-jessica')).toHaveClass(/opacity-100/);
+    await expect(page.getByTestId('team-member-card-jessica')).toBeVisible();
+    await expect(page.getByTestId('team-member-card-iseoluwa')).toBeHidden();
 
     // 7. Reach me buttons and email copy still work
     const copyBtn = page.getByTestId('founder-copy-email');

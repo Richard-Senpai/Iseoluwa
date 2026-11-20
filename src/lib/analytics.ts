@@ -39,7 +39,14 @@ export type AnalyticsEventName =
   | 'team_rail_clicked'
   | 'team_skip_clicked'
   | 'team_cta_clicked'
-  | 'team_link_clicked';
+  | 'team_link_clicked'
+  | 'services_nav_clicked'
+  | 'services_offering_opened'
+  | 'services_related_project_clicked'
+  | 'services_cta_clicked'
+  | 'package_details_opened'
+  | 'package_matrix_viewed'
+  | 'currency_switched';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 

@@ -1,19 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { Container } from '@/components/ui/Container';
 import { Label } from '@/components/ui/Label';
-import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
 import { PackagePrice } from '@/components/ui/PackagePrice';
+import { PackageMatcher } from '@/components/ui/PackageMatcher';
 import { SplitReveal } from '@/components/motion/SplitReveal';
 import { TransitionLink } from '@/components/motion/TransitionLink';
 import {
   PACKAGES_CONTENT,
-  resolvePackageMatch,
   type CurrencyCode,
-  type MatcherNeedOptionId,
-  type MatcherStageOptionId,
 } from '@/content/packages';
 import { useUIStore } from '@/store/ui.store';
 import { track } from '@/lib/analytics';
@@ -23,49 +19,19 @@ import { cn } from '@/lib/utils';
  * Section 8: Packages and "Find your fit" (Home Prompt Section 4.8)
  * - Surface background (`bg-surface`).
  * - Currency switch: USD / NGN toggle (default USD).
- * - Three hairline-separated columns (Launch Starter, Launch Plus, Growth Retainer).
- * - Single-service note + "See all packages" link (`/services`).
- * - Interactive two-question package matcher ("Find your fit"), keyboard accessible,
- *   with `aria-live="polite"` result card linking to `/contact?package=<slug>`.
+ * - Four hairline-separated columns (Launch Starter, Launch Plus, Growth Retainer, Custom Package).
+ * - Single-service note + "See all packages" link (`/services#packages`).
+ * - Shared interactive two-question package matcher ("Find your fit").
  */
 export function Packages() {
   const currency = useUIStore((s) => s.currency);
   const setCurrency = useUIStore((s) => s.setCurrency);
 
-  const [selectedNeed, setSelectedNeed] = useState<MatcherNeedOptionId | null>(null);
-  const [selectedStage, setSelectedStage] = useState<MatcherStageOptionId | null>(null);
-
   const handleCurrencyChange = (nextCurrency: CurrencyCode) => {
     setCurrency(nextCurrency);
     track('currency_switch', { currency: nextCurrency });
+    track('currency_switched', { currency: nextCurrency });
   };
-
-  const handleSelectNeed = (need: MatcherNeedOptionId) => {
-    setSelectedNeed(need);
-    const match = resolvePackageMatch(need, selectedStage);
-    if (match) {
-      track('matcher_result_shown', {
-        need,
-        stage: selectedStage ?? '',
-        recommendedPackage: match.slug,
-      });
-    }
-  };
-
-  const handleSelectStage = (stage: MatcherStageOptionId) => {
-    setSelectedStage(stage);
-    const match = resolvePackageMatch(selectedNeed, stage);
-    if (match) {
-      track('matcher_result_shown', {
-        need: selectedNeed ?? '',
-        stage,
-        recommendedPackage: match.slug,
-      });
-    }
-  };
-
-  const recommendation = resolvePackageMatch(selectedNeed, selectedStage);
-  const { matcher } = PACKAGES_CONTENT;
 
   return (
     <section
@@ -206,134 +172,8 @@ export function Packages() {
           </TransitionLink>
         </div>
 
-        {/* Interactive Two-Question Package Matcher ("Find your fit") */}
-        <div
-          id="package-matcher"
-          className="rounded-card border border-line bg-bg p-6 md:p-10 lg:p-12"
-        >
-          <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
-            <div className="space-y-8 lg:col-span-7">
-              <div className="space-y-2">
-                <Label>{matcher.label}</Label>
-                <h3 className="text-heading-m text-ink">{matcher.title}</h3>
-                <p className="text-body text-ink-muted">{matcher.subtitle}</p>
-              </div>
-
-              {/* Question 1 */}
-              <fieldset className="space-y-4">
-                <legend className="text-label-mono text-ink">{matcher.question1.prompt}</legend>
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {matcher.question1.options.map((option) => {
-                    const isSelected = selectedNeed === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        id={`matcher-need-${option.id}`}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() => handleSelectNeed(option.id)}
-                        className={cn(
-                          'rounded-pill border px-4 py-2.5 text-sm font-medium transition-colors duration-200',
-                          isSelected
-                            ? 'border-line-accent bg-green-light text-[#0a0a0a] dark:bg-green-signal dark:text-[#0a0a0a]'
-                            : 'border-line bg-transparent text-ink hover:border-line-accent',
-                        )}
-                      >
-                        {option.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-
-              {/* Question 2 */}
-              <fieldset className="space-y-4">
-                <legend className="text-label-mono text-ink">{matcher.question2.prompt}</legend>
-                <div className="flex flex-wrap gap-3 pt-1">
-                  {matcher.question2.options.map((option) => {
-                    const isSelected = selectedStage === option.id;
-                    return (
-                      <button
-                        key={option.id}
-                        id={`matcher-stage-${option.id}`}
-                        type="button"
-                        aria-pressed={isSelected}
-                        onClick={() => handleSelectStage(option.id)}
-                        className={cn(
-                          'rounded-pill border px-4 py-2.5 text-sm font-medium transition-colors duration-200',
-                          isSelected
-                            ? 'border-line-accent bg-green-light text-[#0a0a0a] dark:bg-green-signal dark:text-[#0a0a0a]'
-                            : 'border-line bg-transparent text-ink hover:border-line-accent',
-                        )}
-                      >
-                        {option.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </fieldset>
-            </div>
-
-            {/* Result Card */}
-            <div
-              aria-live="polite"
-              aria-atomic="true"
-              className="flex flex-col justify-between rounded-card border border-line bg-surface p-6 md:p-8 lg:col-span-5"
-            >
-              {recommendation ? (
-                <div className="flex h-full flex-col justify-between gap-8">
-                  <div className="space-y-4">
-                    <Label withStatusDot muted={false}>
-                      {matcher.recommendedLabel}
-                    </Label>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <h4
-                        id="matcher-result-title"
-                        className="text-heading-m text-ink"
-                      >
-                        {recommendation.packageName}
-                      </h4>
-                      <span className="font-mono text-lg font-medium text-line-accent">
-                        {recommendation.price[currency]}
-                      </span>
-                    </div>
-                    <p className="text-body text-ink-muted">{recommendation.reason}</p>
-                  </div>
-
-                  <div>
-                    <Button
-                      href={recommendation.href}
-                      variant="primary"
-                      onClick={() => {
-                        track('matcher_button_click', {
-                          package: recommendation.slug,
-                          currency,
-                        });
-                        track('package_cta_clicked', {
-                          package: recommendation.slug,
-                          source: 'home-matcher',
-                        });
-                        if (recommendation.slug === 'custom') {
-                          track('custom_package_clicked', {
-                            location: 'home_matcher',
-                          });
-                        }
-                      }}
-                      className="w-full sm:w-auto"
-                    >
-                      {recommendation.ctaLabel ??
-                        `${recommendation.ctaPrefix} ${recommendation.packageName}`}
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex h-full items-center justify-center py-8 text-center">
-                  <p className="text-body max-w-[30ch] text-ink-muted">{matcher.emptyPrompt}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        {/* Shared Interactive Two-Question Package Matcher ("Find your fit") */}
+        <PackageMatcher source="home-matcher" idPrefix="matcher" />
       </Container>
     </section>
   );

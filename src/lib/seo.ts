@@ -142,6 +142,9 @@ export function buildFounderPersonJsonLd(): Record<string, unknown> {
   };
 }
 
+import { ALL_PACKAGES } from '@/content/packages';
+import { SERVICES } from '@/content/services';
+
 export function buildContactPageJsonLd(): Record<string, unknown> {
   const sameAs = getActiveSocials(SITE_CONTENT.socials)
     .filter((s) => s.id !== 'whatsapp')
@@ -172,5 +175,72 @@ export function buildContactPageJsonLd(): Record<string, unknown> {
         },
       ],
     },
+  };
+}
+
+export function buildServicesJsonLd(): Array<Record<string, unknown>> {
+  return SERVICES.map((service) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: service.title,
+    description: `${service.tagline} ${service.intro}`,
+    url: `${SITE_CONTENT.seo.siteUrl}/services#service-${service.slug}`,
+    provider: {
+      '@type': 'Organization',
+      name: SITE_CONTENT.plainName,
+      url: SITE_CONTENT.seo.siteUrl,
+    },
+    areaServed: ['Africa', 'Europe', 'Americas'],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: `${service.title} Deliverables`,
+      itemListElement: service.offerings.map((offering) => ({
+        '@type': 'Offer',
+        itemOffered: {
+          '@type': 'Service',
+          name: offering.title,
+          description: offering.description,
+        },
+      })),
+    },
+  }));
+}
+
+export function buildPackagesOfferCatalogJsonLd(): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'OfferCatalog',
+    name: `${SITE_CONTENT.plainName} Packages`,
+    url: `${SITE_CONTENT.seo.siteUrl}/services#packages`,
+    itemListElement: ALL_PACKAGES.map((pkg) => {
+      const offer: Record<string, unknown> = {
+        '@type': 'Offer',
+        name: pkg.name,
+        description: `${pkg.bestFor}. ${pkg.description}. (${pkg.prices.USD} / ${pkg.prices.NGN}; timeline: ${pkg.timeline})`,
+        url: `${SITE_CONTENT.seo.siteUrl}${pkg.servicesHref}`,
+      };
+      if (typeof pkg.startingPriceUsd === 'number') {
+        offer.price = pkg.startingPriceUsd;
+        offer.priceCurrency = 'USD';
+      }
+      return offer;
+    }),
+  };
+}
+
+export function buildFaqPageJsonLd(
+  items: ReadonlyArray<{ question: string; answer: string }>,
+): Record<string, unknown> {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
   };
 }

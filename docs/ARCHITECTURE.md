@@ -184,6 +184,21 @@ To enable Aeonik in production:
   - The member rail (`01 ISÉOLUWA · FOUNDER` ... `04 JESSICA · MARKETING`) highlights the active member with `border-line-accent` and `aria-current="step"`, and scrolls smoothly via Lenis (`useLenis()`) when clicked.
   - A `Skip team` link is the first focusable element in the section, jumping directly to `#what-drives-us`.
 - **Mobile, Reduced Motion, and SSR Fallback**:
-  - Renders all four members in order as unpinned vertical blocks with an in-page member rail and a single `FlowingLine` at the top of the section.
+  - On mobile (`< lg`), displays a large 4:5 portrait and only the single active role card (never stacking all 4 role cards vertically), changing dynamically on scroll or swipe.
+  - Under `prefers-reduced-motion: reduce`, renders unpinned with all four tiles visible.
+
+---
+
+## 8. Services Page (`/services`) Architecture
+
+- **Data & Types**:
+  - `src/types/services.ts` and `src/content/services.ts`: Single source of truth for the three core services (`01 / BRANDING`, `02 / WEB` on `.surface-inverse`, `03 / MARKETING`), including offerings, deliverables, plain-language outcomes, related Work categories, and service-specific mini FAQs.
+  - `src/content/packages.ts`: Extended with `bestFor`, `includes`, `notIncluded`, `revisions`, `paymentNote`, `group`, and `startingPriceUsd` across all 7 packages (`launch-starter`, `launch-plus`, `brand-only`, `build-only`, `care-plan`, `growth-retainer`, `custom`).
+  - `src/content/package-matrix.ts`: Side-by-side comparison matrix (`PACKAGE_MATRIX_ROWS`), project add-ons (`PACKAGE_ADD_ONS`), and plain-language studio terms (`PACKAGE_TERMS`).
+  - `src/features/services/services.content.ts`: Page copy for Hero, Sticky service navigation (`BRANDING · WEB · MARKETING · PROCESS · PACKAGES · FAQ`), 7-step Process + How we communicate, Packages section, and shared 8-item FAQ (`SERVICES_FAQ_ITEMS`, also used by `/faq`).
+- **Sections (`src/features/services/sections/`)**:
+  - `ServicesHero.tsx`, `ServicesStickyNav.tsx`, `ServiceSection.tsx` (reusable across all 3 services with desktop cursor-following preview frame from concept project media and keyboard/touch accordion), `ServicesProcess.tsx`, `ServicesPackages.tsx` (equal `minmax(0, 1fr)` columns, container-query `<PackagePrice />`, desktop sticky comparison table + mobile per-package accordion, add-ons, terms, and shared `<PackageMatcher />`), and `ServicesFaq.tsx`.
+- **SEO**: `buildServicesJsonLd()` (`Service` x3), `buildPackagesOfferCatalogJsonLd()` (`OfferCatalog`), `buildFaqPageJsonLd()` (`FAQPage`), and `buildBreadcrumbJsonLd()` (`BreadcrumbList`) in `src/lib/seo.ts`.
+
 
 

@@ -392,8 +392,8 @@ export function TeamStory() {
             </div>
           </div>
 
-          {/* Center 3-column editorial stage: Quick Facts (Left) | 4:5 Portrait (Center) | 4 Team Tiles (Right) */}
-          <div className="my-auto grid grid-cols-1 items-center gap-3 md:gap-6 lg:grid-cols-12 lg:gap-8">
+          {/* Center 3-column editorial stage: Quick Facts (Left) | 4:5 Portrait (Center) | Team Tile(s) (Right) */}
+          <div className="my-auto grid grid-cols-1 items-center gap-5 md:gap-6 lg:grid-cols-12 lg:gap-8">
             {/* Left column: Quick Facts in Mono (updates dynamically per member) */}
             <div className="order-3 hidden lg:order-1 lg:col-span-3 lg:block">
               <dl className="divide-y divide-line border-y border-line">
@@ -414,12 +414,12 @@ export function TeamStory() {
               </dl>
             </div>
 
-            {/* Center column: Single 4:5 Portrait Slot (switches dynamically in place as you scroll/tap) */}
+            {/* Center column: Large 4:5 Portrait Slot (switches dynamically in place as you scroll or swipe) */}
             <div className="order-1 flex justify-center lg:order-2 lg:col-span-5">
               <div
                 ref={portraitWrapRef}
                 data-testid="founder-portrait-frame"
-                className="relative aspect-[4/5] w-full max-w-[175px] overflow-hidden rounded-card border border-line bg-surface sm:max-w-[240px] lg:max-w-[380px]"
+                className="relative aspect-[4/5] w-full max-w-[320px] overflow-hidden rounded-card border border-line bg-surface sm:max-w-[350px] lg:max-w-[380px]"
               >
                 <div
                   style={{
@@ -452,7 +452,7 @@ export function TeamStory() {
                           loading={idx === 0 ? undefined : shouldPreloadPortraits ? 'eager' : 'lazy'}
                           blurDataURL={member.portrait.blurDataURL}
                           objectPosition={objectPos}
-                          sizes="(max-width: 768px) 240px, 380px"
+                          sizes="(max-width: 768px) 340px, 380px"
                           className="h-full w-full rounded-none"
                         />
                       </div>
@@ -462,9 +462,9 @@ export function TeamStory() {
               </div>
             </div>
 
-            {/* Right column: The 4 Team Tiles (01 The founder -> 02 The designer -> 03 The developer -> 04 The marketer) */}
+            {/* Right column: On mobile (< lg), shows ONLY the active member's tile (not stacked) and changes on scroll/swipe; on desktop (lg+), shows all 4 tiles with moving highlight */}
             <div className="order-2 lg:order-3 lg:col-span-4">
-              <div className="space-y-1.5 md:space-y-3 lg:space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 {TEAM.map((member, idx) => {
                   const isActive = idx === activeMemberIdx;
                   return (
@@ -474,40 +474,66 @@ export function TeamStory() {
                       data-testid={`team-member-card-${member.id}`}
                       onClick={() => handleSelectMember(idx)}
                       className={cn(
-                        'cursor-pointer rounded-card border px-3 py-2 transition-all duration-300 md:p-4 lg:p-5',
+                        'cursor-pointer rounded-card border p-4 transition-all duration-300 md:p-5',
                         shouldSimplifyMotion
-                          ? 'border-line bg-surface opacity-100'
+                          ? 'block border-line bg-surface opacity-100'
                           : isActive
-                            ? 'border-line-accent bg-surface opacity-100'
-                            : 'border-line/60 bg-bg/80 opacity-55 hover:opacity-85',
+                            ? 'block border-line-accent bg-surface opacity-100'
+                            : 'hidden border-line/60 bg-bg/80 opacity-55 hover:opacity-85 lg:block',
                       )}
                     >
                       <div
                         data-testid={`founder-chapter-${member.orderNumber}`}
                         className="flex flex-wrap items-baseline justify-between gap-2"
                       >
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                           <span className="text-label-mono text-accent">{member.orderNumber}</span>
-                          <h3 className="font-sans text-sm font-medium text-ink md:text-base lg:text-lg">
+                          <h3 className="font-sans text-base font-medium text-ink md:text-lg">
                             {member.tileLabel}
                           </h3>
                         </div>
-                        <span className="font-mono text-[11px] text-ink-muted md:text-xs">
+                        <span className="font-mono text-xs text-ink-muted">
                           {`${member.name} · ${member.role}`}
                         </span>
                       </div>
 
-                      <p
-                        className={cn(
-                          'mt-1.5 font-sans text-xs leading-snug text-ink-muted md:mt-2.5 md:text-sm lg:leading-relaxed',
-                          shouldSimplifyMotion || isActive ? 'block' : 'hidden lg:block',
-                        )}
-                      >
+                      <p className="text-body-m mt-2.5 text-ink-muted">
                         {member.tileSummary}
                       </p>
                     </article>
                   );
                 })}
+
+                {/* Mobile swipe / step bar (< lg) so mobile visitors can swipe, scroll, or tap Prev/Next */}
+                {!shouldSimplifyMotion && (
+                  <div className="flex items-center justify-between pt-1 lg:hidden">
+                    <button
+                      type="button"
+                      disabled={activeMemberIdx === 0}
+                      onClick={() => handleSelectMember(activeMemberIdx - 1)}
+                      aria-label="Previous team member"
+                      className="text-label-mono inline-flex items-center gap-1.5 rounded-pill border border-line bg-bg px-3.5 py-1.5 text-ink transition-colors disabled:opacity-35"
+                    >
+                      <Icon name="arrow_back" size={20} />
+                      <span>Prev</span>
+                    </button>
+
+                    <span className="text-label-mono text-ink-muted">
+                      Swipe or scroll · {currentMember.orderNumber} / {TEAM_STORY_CONTENT.totalCountFormatted}
+                    </span>
+
+                    <button
+                      type="button"
+                      disabled={activeMemberIdx === TEAM.length - 1}
+                      onClick={() => handleSelectMember(activeMemberIdx + 1)}
+                      aria-label="Next team member"
+                      className="text-label-mono inline-flex items-center gap-1.5 rounded-pill border border-line bg-bg px-3.5 py-1.5 text-ink transition-colors disabled:opacity-35"
+                    >
+                      <span>Next</span>
+                      <Icon name="arrow_forward" size={20} />
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
