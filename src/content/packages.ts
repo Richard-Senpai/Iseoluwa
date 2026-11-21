@@ -112,7 +112,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     notIncluded: ['E-commerce checkout', 'Paid ad campaign management'],
     timeline: '3-4 weeks',
     timelineLabel: '3-4 WEEKS',
-    revisions: '[2 rounds per design stage]',
+    revisions: '2 rounds per design stage',
     paymentNote: '50% deposit to start · 50% on delivery',
     prices: {
       USD: 'From $1,500',
@@ -143,7 +143,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     ],
     timeline: '6-8 weeks',
     timelineLabel: '6-8 WEEKS',
-    revisions: '[2 rounds per design stage]',
+    revisions: '2 rounds per design stage',
     paymentNote: '50% deposit to start · 50% on delivery (or 25/50/25 milestones)',
     prices: {
       USD: 'From $3,500',
@@ -172,7 +172,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     ],
     timeline: 'Monthly',
     timelineLabel: 'MONTHLY',
-    revisions: '[2 rounds per design stage]',
+    revisions: '2 rounds per design stage',
     paymentNote: 'Billed monthly in advance',
     prices: {
       USD: 'From $600 / month',
@@ -203,7 +203,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     ],
     timeline: 'Scoped with you',
     timelineLabel: 'SCOPED WITH YOU',
-    revisions: '[Agreed per scope]',
+    revisions: 'Agreed per scope',
     paymentNote: '50% deposit or milestone schedule agreed upfront',
     prices: {
       USD: 'You set the budget',
@@ -233,7 +233,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     notIncluded: ['Website design and development', 'Monthly marketing management'],
     timeline: '2-3 weeks',
     timelineLabel: '2-3 WEEKS',
-    revisions: '[2 rounds per design stage]',
+    revisions: '2 rounds per design stage',
     paymentNote: '50% deposit to start · 50% on delivery',
     prices: {
       USD: 'From $800',
@@ -263,7 +263,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     notIncluded: ['Logo and brand identity design'],
     timeline: 'Depends on scope',
     timelineLabel: 'DEPENDS ON SCOPE',
-    revisions: '[2 rounds per design stage]',
+    revisions: '2 rounds per design stage',
     paymentNote: '50% deposit to start · 50% on delivery',
     prices: {
       USD: 'From $1,200',
@@ -292,7 +292,7 @@ export const ALL_PACKAGES: PackageItem[] = [
     ],
     timeline: 'Monthly',
     timelineLabel: 'MONTHLY',
-    revisions: '[Ongoing monthly edits]',
+    revisions: 'Ongoing monthly edits',
     paymentNote: 'Billed monthly in advance',
     prices: {
       USD: 'From $120 / month',

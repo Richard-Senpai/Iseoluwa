@@ -1,6 +1,6 @@
 'use client';
 
-import type { MouseEvent } from 'react';
+import { useEffect, type MouseEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { Container } from '@/components/ui/Container';
 import { Label } from '@/components/ui/Label';
@@ -27,16 +27,16 @@ export interface CaseStudyViewProps {
 }
 
 /**
- * Stage 3: Case Study Template (`/work/[category]/[slug]`, Work Prompt Section 7):
- * 1. Back control returning to `/work/[category]` with zoom-out.
- * 2. Hero: project's hero media filling the viewport + mono `[CATEGORY] / [YEAR]` + Display XL `h1`.
- * 3. Meta row (mono): Client, Year, Services, Role.
- * 4. Overview: large summary paragraph that lights up on scroll (`ScrollText`).
- * 5. The challenge / What we did / The result: asymmetric editorial layout.
- * 6. Gallery: varied layout blocks (full bleed, two-up, offset) with inner parallax and reveal.
- * 7. Client quote: optional block rendered only if `project.testimonial` exists.
- * 8. Next project: large zoom link with preview media to the next project in the same category.
- * 9. Closing CTA & Footer transition (`WorkClosingCta`).
+ * Stage 3: Case Study Template (`/work/[category]/[slug]`):
+ * - Supports both studio concept case studies (`kind === 'concept'`) and
+ *   website builds (`kind === 'real'` and `kind === 'sample'`).
+ * - For `kind === 'real'`:
+ *   - Displays `LIVE SITE` badge (green dot + mono `LIVE SITE`) and a prominent
+ *     `Visit live site` external button (`target="_blank" rel="noopener noreferrer"`).
+ *   - Renders **Overview**, **What the site does** (`highlights`), and **How it is built** (`builtWith`),
+ *     omitting any section whose array is empty and hiding any empty meta fields.
+ * - For `kind === 'sample'`:
+ *   - Displays `SAMPLE LAYOUT` badge and plain description, never shows `Visit live site` or client name.
  */
 export function CaseStudyView({
   category,
@@ -51,6 +51,12 @@ export function CaseStudyView({
 
   const { stage3 } = WORK_CONTENT;
   const backCategoryHref = `/work/${category.slug}`;
+
+  useEffect(() => {
+    if (project.kind === 'sample') {
+      track('work_sample_viewed', { slug: project.slug });
+    }
+  }, [project.kind, project.slug]);
 
   const handleBackToCategory = (event: MouseEvent<HTMLAnchorElement>) => {
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
@@ -122,6 +128,15 @@ export function CaseStudyView({
     (item) => item.layout === 'offset-right' || item.layout === 'offset-left',
   );
 
+  const hasHighlights = Boolean(project.highlights && project.highlights.length > 0);
+  const hasBuiltWith = Boolean(project.builtWith && project.builtWith.length > 0);
+  const hasChallengeApproach = Boolean(project.challenge && project.approach);
+
+  const closingPrimaryHref =
+    category.slug === 'websites'
+      ? `/contact?package=build-only&source=case-study-${project.slug}`
+      : undefined;
+
   return (
     <>
       {/* 1. Hero Section */}
@@ -139,7 +154,24 @@ export function CaseStudyView({
             </a>
 
             <div className="flex flex-wrap items-center gap-3">
-              {SHOW_CONCEPT_BADGE && project.isConcept && (
+              {project.kind === 'real' && (
+                <span
+                  data-testid="live-site-badge"
+                  className="text-label-mono inline-flex items-center gap-1.5 rounded-pill border border-line px-2.5 py-0.5 text-ink"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                  <span>{stage3.liveBadgeLabel}</span>
+                </span>
+              )}
+              {project.kind === 'sample' && (
+                <span
+                  data-testid="sample-layout-badge"
+                  className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
+                >
+                  {stage3.sampleBadgeLabel}
+                </span>
+              )}
+              {SHOW_CONCEPT_BADGE && (project.kind === 'concept' || project.isConcept) && (
                 <span
                   data-testid="concept-project-badge"
                   className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
@@ -148,15 +180,36 @@ export function CaseStudyView({
                 </span>
               )}
               <Label>
-                {category.title.toUpperCase()} / {project.year}
+                {project.year
+                  ? `${category.title.toUpperCase()} / ${project.year}`
+                  : category.title.toUpperCase()}
               </Label>
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <SplitReveal as="h1" triggerOnLoad className="text-display-xl text-ink">
               {project.title}
             </SplitReveal>
+
+            {project.kind === 'real' && project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-testid="visit-live-site-button"
+                onClick={() =>
+                  track('work_live_site_clicked', {
+                    slug: project.slug,
+                    url: project.liveUrl!,
+                  })
+                }
+                className="text-btn inline-flex h-12 shrink-0 items-center gap-2.5 rounded-pill bg-accent px-6 font-medium text-[#0a0a0a] transition-transform duration-200 hover:scale-[1.02]"
+              >
+                <span>{stage3.visitLiveSiteLabel}</span>
+                <Icon name="arrow_outward" size={20} />
+              </a>
+            )}
           </div>
 
           {/* Viewport-filling Hero Media Frame (target of ZoomTransition) */}
@@ -184,33 +237,41 @@ export function CaseStudyView({
             </Parallax>
           </div>
 
-          {/* 2. Meta Row (Client, Year, Services, Role) */}
-          <dl className="grid grid-cols-2 gap-6 border-y border-line py-8 md:grid-cols-4">
-            <div className="space-y-2">
-              <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.client}</dt>
-              <dd className="font-mono text-sm text-ink">{project.client}</dd>
-            </div>
-            <div className="space-y-2">
-              <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.year}</dt>
-              <dd className="flex flex-wrap items-center gap-2 font-mono text-sm text-ink">
-                <span>{project.year}</span>
-                {SHOW_CONCEPT_BADGE && project.isConcept && (
-                  <span className="text-label-mono text-ink-muted">
-                    · {stage3.conceptBadgeLabel}
-                  </span>
-                )}
-              </dd>
-            </div>
-            <div className="space-y-2">
-              <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.services}</dt>
-              <dd>
-                <TagList items={project.services} className="text-ink" />
-              </dd>
-            </div>
-            <div className="space-y-2">
-              <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.role}</dt>
-              <dd className="font-mono text-sm text-ink">{project.role}</dd>
-            </div>
+          {/* 2. Meta Row (only renders non-empty fields; never shows client or year if omitted) */}
+          <dl className="grid grid-cols-1 gap-6 border-y border-line py-8 sm:grid-cols-2 md:grid-cols-4">
+            {project.client && project.kind !== 'sample' && (
+              <div className="space-y-2">
+                <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.client}</dt>
+                <dd className="font-mono text-sm text-ink">{project.client}</dd>
+              </div>
+            )}
+            {project.year && (
+              <div className="space-y-2">
+                <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.year}</dt>
+                <dd className="flex flex-wrap items-center gap-2 font-mono text-sm text-ink">
+                  <span>{project.year}</span>
+                  {SHOW_CONCEPT_BADGE && (project.kind === 'concept' || project.isConcept) && (
+                    <span className="text-label-mono text-ink-muted">
+                      · {stage3.conceptBadgeLabel}
+                    </span>
+                  )}
+                </dd>
+              </div>
+            )}
+            {project.services.length > 0 && (
+              <div className="space-y-2">
+                <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.services}</dt>
+                <dd>
+                  <TagList items={project.services} className="text-ink" />
+                </dd>
+              </div>
+            )}
+            {project.role && (
+              <div className="space-y-2">
+                <dt className="text-label-mono text-ink-muted">{stage3.metaLabels.role}</dt>
+                <dd className="font-mono text-sm text-ink">{project.role}</dd>
+              </div>
+            )}
           </dl>
         </Container>
       </section>
@@ -227,48 +288,147 @@ export function CaseStudyView({
         </Container>
       </section>
 
-      {/* 4. Asymmetric Editorial Breakdown: The Challenge / What We Did / The Result */}
-      <section className="border-t border-line py-[var(--section-pad-y)]">
-        <Container className="space-y-20 md:space-y-28">
-          {/* The Challenge */}
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
-            <div className="lg:col-span-4">
-              <Label>{stage3.sections.challenge}</Label>
-            </div>
-            <Reveal className="lg:col-span-8">
-              <p className="text-body-l max-w-[60ch] text-ink">{project.challenge}</p>
-            </Reveal>
-          </div>
+      {/* 4A. Real Website Breakdown: What the site does & How it is built */}
+      {(hasHighlights || hasBuiltWith) && (
+        <section className="border-t border-line py-[var(--section-pad-y)]">
+          <Container className="space-y-20 md:space-y-24">
+            {hasHighlights && (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+                <div className="lg:col-span-4">
+                  <Label>{stage3.sections.whatTheSiteDoes}</Label>
+                </div>
+                <Reveal className="lg:col-span-8">
+                  <ul className="space-y-5">
+                    {project.highlights!.map((item, idx) => (
+                      <li
+                        key={idx}
+                        className="flex items-start gap-4 border-b border-line pb-5 last:border-b-0 last:pb-0"
+                      >
+                        <span className="text-label-mono mt-1 text-line-accent">
+                          {String(idx + 1).padStart(2, '0')}
+                        </span>
+                        <p className="text-body-l max-w-[60ch] text-ink">{item}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </Reveal>
+              </div>
+            )}
 
-          {/* What We Did */}
-          <div className="grid grid-cols-1 gap-6 border-t border-line pt-16 lg:grid-cols-12">
-            <div className="lg:col-span-4">
-              <Label>{stage3.sections.approach}</Label>
-            </div>
-            <Reveal className="lg:col-span-8">
-              <p className="text-body-l max-w-[60ch] text-ink">{project.approach}</p>
-            </Reveal>
-          </div>
+            {hasBuiltWith && (
+              <div
+                className={
+                  hasHighlights
+                    ? 'grid grid-cols-1 gap-6 border-t border-line pt-16 lg:grid-cols-12'
+                    : 'grid grid-cols-1 gap-6 lg:grid-cols-12'
+                }
+              >
+                <div className="lg:col-span-4">
+                  <Label>{stage3.sections.howItIsBuilt}</Label>
+                </div>
+                <Reveal className="lg:col-span-8">
+                  <div className="flex flex-wrap gap-3">
+                    {project.builtWith!.map((tech) => (
+                      <span
+                        key={tech}
+                        className="text-label-mono rounded-pill border border-line px-4 py-2 text-ink"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </Reveal>
+              </div>
+            )}
+          </Container>
+        </section>
+      )}
 
-          {/* The Result (single bold/large line followed by supporting text) */}
-          <div className="grid grid-cols-1 gap-6 border-t border-line pt-16 lg:grid-cols-12">
-            <div className="lg:col-span-4">
-              <Label>{stage3.sections.result}</Label>
+      {/* 4B. Concept Case Study Editorial Breakdown: The Challenge / What We Did / The Result */}
+      {hasChallengeApproach && (
+        <section className="border-t border-line py-[var(--section-pad-y)]">
+          <Container className="space-y-20 md:space-y-28">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <Label>{stage3.sections.challenge}</Label>
+              </div>
+              <Reveal className="lg:col-span-8">
+                <p className="text-body-l max-w-[60ch] text-ink">{project.challenge}</p>
+              </Reveal>
             </div>
-            <Reveal className="space-y-4 lg:col-span-8">
-              <p className="text-display-l font-medium text-ink">{project.result}</p>
-              <p className="text-body-l max-w-[60ch] text-ink-muted">{project.outcome}</p>
-            </Reveal>
-          </div>
-        </Container>
-      </section>
+
+            <div className="grid grid-cols-1 gap-6 border-t border-line pt-16 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <Label>{stage3.sections.approach}</Label>
+              </div>
+              <Reveal className="lg:col-span-8">
+                <p className="text-body-l max-w-[60ch] text-ink">{project.approach}</p>
+              </Reveal>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 border-t border-line pt-16 lg:grid-cols-12">
+              <div className="lg:col-span-4">
+                <Label>{stage3.sections.result}</Label>
+              </div>
+              <Reveal className="space-y-4 lg:col-span-8">
+                <p className="text-display-l font-medium text-ink">{project.result}</p>
+                {project.outcome && (
+                  <p className="text-body-l max-w-[60ch] text-ink-muted">{project.outcome}</p>
+                )}
+              </Reveal>
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* 5. Gallery (Full bleed, Two-up, Offset blocks with inner Parallax and Reveal) */}
       <section className="border-t border-line py-[var(--section-pad-y)]">
         <Container className="space-y-12 md:space-y-20">
-          <Label>{stage3.sections.gallery}</Label>
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <Label>{stage3.sections.gallery}</Label>
+            {project.kind === 'real' && project.liveUrl && (
+              <a
+                href={project.liveUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() =>
+                  track('work_live_site_clicked', {
+                    slug: project.slug,
+                    url: project.liveUrl!,
+                  })
+                }
+                className="text-label-mono inline-flex items-center gap-2 text-ink transition-colors hover:text-line-accent"
+              >
+                <span>{stage3.visitLiveSiteLabel}</span>
+                <Icon name="arrow_outward" size={20} />
+              </a>
+            )}
+          </div>
 
-          {/* Full-bleed block */}
+          {/* Offset editorial frame (e.g. gallery-1 4:5 mobile screens) */}
+          {offsetGallery.map((slot, idx) => (
+            <div key={`offset-${idx}`} className="grid grid-cols-1 lg:grid-cols-12">
+              <Reveal
+                className={
+                  slot.layout === 'offset-left'
+                    ? 'lg:col-span-8 lg:col-start-1'
+                    : 'lg:col-span-9 lg:col-start-4'
+                }
+              >
+                <Parallax>
+                  <Media
+                    type={slot.type === 'image' ? 'image' : 'placeholder'}
+                    src={slot.src}
+                    alt={slot.alt}
+                    label={slot.label}
+                    aspectRatio={slot.aspectRatio}
+                  />
+                </Parallax>
+              </Reveal>
+            </div>
+          ))}
+
+          {/* Full-bleed block (e.g. gallery-2 16:9 desktop sections) */}
           {fullGallery.map((slot, idx) => (
             <Reveal key={`full-${idx}`}>
               <Parallax>
@@ -310,23 +470,6 @@ export function CaseStudyView({
               ))}
             </div>
           )}
-
-          {/* Offset editorial frame */}
-          {offsetGallery.map((slot, idx) => (
-            <div key={`offset-${idx}`} className="grid grid-cols-1 lg:grid-cols-12">
-              <Reveal className="lg:col-span-9 lg:col-start-4">
-                <Parallax>
-                  <Media
-                    type={slot.type === 'image' ? 'image' : 'placeholder'}
-                    src={slot.src}
-                    alt={slot.alt}
-                    label={slot.label}
-                    aspectRatio={slot.aspectRatio}
-                  />
-                </Parallax>
-              </Reveal>
-            </div>
-          ))}
 
           {/* Quiet mono photo credit line at bottom of case study */}
           {SHOW_PHOTO_CREDITS && project.credits && project.credits.length > 0 && (
@@ -405,7 +548,10 @@ export function CaseStudyView({
       </section>
 
       {/* 8. Closing CTA & Footer Transition */}
-      <WorkClosingCta contextLocation={`case_study_${project.slug}`} />
+      <WorkClosingCta
+        contextLocation={`case_study_${project.slug}`}
+        primaryHref={closingPrimaryHref}
+      />
     </>
   );
 }

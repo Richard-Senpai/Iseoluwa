@@ -193,18 +193,34 @@ export function CategoryPanel({
       <div className="flex flex-wrap items-center justify-between gap-4 border-t border-current/15 pt-5">
         <div className="flex flex-wrap items-center gap-4">
           <span className="text-label-mono font-medium">{projectCountLabel}</span>
-          {SHOW_CONCEPT_BADGE && projects.some((p) => p.isConcept) && (
+          {projects.some((p) => p.kind === 'real') ? (
             <>
               <span aria-hidden="true" className="opacity-40">
                 ·
               </span>
               <span
-                data-testid="concept-project-badge"
-                className="text-label-mono rounded-pill border border-current/25 px-2.5 py-0.5 opacity-80"
+                data-testid="live-site-badge"
+                className="text-label-mono inline-flex items-center gap-1.5 rounded-pill border border-current/25 px-2.5 py-0.5 opacity-90"
               >
-                {WORK_CONTENT.stage3.conceptBadgeLabel}
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                <span>{WORK_CONTENT.stage3.liveBadgeLabel}</span>
               </span>
             </>
+          ) : (
+            SHOW_CONCEPT_BADGE &&
+            projects.some((p) => p.kind === 'concept' || p.isConcept) && (
+              <>
+                <span aria-hidden="true" className="opacity-40">
+                  ·
+                </span>
+                <span
+                  data-testid="concept-project-badge"
+                  className="text-label-mono rounded-pill border border-current/25 px-2.5 py-0.5 opacity-80"
+                >
+                  {WORK_CONTENT.stage3.conceptBadgeLabel}
+                </span>
+              </>
+            )
           )}
           <span aria-hidden="true" className="opacity-40">
             ·

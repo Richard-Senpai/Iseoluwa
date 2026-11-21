@@ -121,72 +121,66 @@ export const SERVICES: readonly ServiceItem[] = [
         title: 'UI/UX design and prototyping',
         description:
           'Clear structure, thoughtful user journeys, and interactive prototypes you can test before code begins.',
-        // TODO: confirm with the team
         deliverables: ['Page layouts', 'Clickable prototype', 'Mobile and desktop designs'],
-        previewImage: '/media/concepts/haven-stays/hero.webp',
-        previewAlt: 'Haven Stays UI/UX design and booking flow',
+        previewImage: '/media/projects/icestein-grillz/hero.webp',
+        previewAlt: 'Icestein Grillz UI/UX design and custom order flow',
       },
       {
         id: 'web-marketing-sites',
         title: 'Marketing websites and landing pages',
         description:
           'Fast, editorial websites engineered to explain your value clearly and turn visitors into enquiries.',
-        // TODO: confirm with the team
         deliverables: ['Responsive pages', 'Contact forms', 'Analytics setup'],
-        previewImage: '/media/concepts/lumen-dental/hero.webp',
-        previewAlt: 'Lumen Dental marketing website design',
+        previewImage: '/media/projects/crtx-nutrition/hero.webp',
+        previewAlt: 'CRTX Nutrition direct-to-consumer landing page',
       },
       {
         id: 'web-apps',
         title: 'Web applications and dashboards',
         description: 'Full-stack builds tailored to your product or internal workflow.',
-        // TODO: confirm with the team
         deliverables: [
           'Frontend application',
           'Backend API and database',
           'Authentication where needed',
           'Production deployment',
         ],
-        previewImage: '/media/concepts/ledgerly/hero.webp',
-        previewAlt: 'Ledgerly web application and dashboard interface',
+        previewImage: '/media/projects/richard-portfolio/hero.webp',
+        previewAlt: 'Richard full-stack web designer and developer portfolio',
       },
       {
         id: 'web-ecommerce',
         title: 'E-commerce stores',
         description:
           'Online storefronts designed for smooth browsing, mobile checkout, and reliable payments.',
-        // TODO: confirm with the team
         deliverables: ['Product catalogue', 'Cart and checkout', 'Payment integration'],
-        previewImage: '/media/concepts/adire-atelier/hero.webp',
-        previewAlt: 'Adire Atelier e-commerce storefront and product page',
+        previewImage: '/media/projects/icestein-grillz/gallery-2.webp',
+        previewAlt: 'Icestein Grillz e-commerce storefront and product catalog',
       },
       {
         id: 'web-cms-seo',
         title: 'CMS, hosting, performance, and SEO foundations',
         description:
           'A clean content setup so your team can publish updates easily without breaking the design.',
-        // TODO: confirm with the team
         deliverables: [
           'Easy-to-edit content system',
           'Fast hosting setup',
           'Technical SEO basics',
         ],
-        previewImage: '/media/concepts/haven-stays/gallery-01.webp',
-        previewAlt: 'CMS and technical performance foundation preview',
+        previewImage: '/media/projects/divathea/hero.webp',
+        previewAlt: 'Divathea website performance and CMS structure',
       },
       {
         id: 'web-care',
         title: 'Maintenance and support',
         description:
           'Ongoing technical care after launch so your website stays fast, secure, and current.',
-        // TODO: confirm with the team
         deliverables: [
           'Software updates',
           'Scheduled backups',
           'Security checks',
           'Minor edits (the Care Plan)',
         ],
-        previewImage: '/media/concepts/ledgerly/gallery-01.webp',
+        previewImage: '/media/projects/richard-portfolio/gallery-2.webp',
         previewAlt: 'Website maintenance and support overview',
       },
     ],

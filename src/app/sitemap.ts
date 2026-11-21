@@ -21,7 +21,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.85,
   }));
 
-  const projectEntries: MetadataRoute.Sitemap = ALL_PROJECTS.map((project) => ({
+  const projectEntries: MetadataRoute.Sitemap = ALL_PROJECTS.filter(
+    (project) => project.kind !== 'sample',
+  ).map((project) => ({
     url: `${baseUrl}${project.href}`,
     lastModified: now,
     changeFrequency: 'monthly',

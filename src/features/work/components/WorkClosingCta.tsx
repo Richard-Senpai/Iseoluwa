@@ -14,6 +14,7 @@ import { track } from '@/lib/analytics';
 
 export interface WorkClosingCtaProps {
   contextLocation: string;
+  primaryHref?: string;
 }
 
 /**
@@ -23,7 +24,7 @@ export interface WorkClosingCtaProps {
  * - Buttons: "Start a project", "Book a free 20-minute call", and "Message us on WhatsApp"
  * - Wrapped in `SurfaceTransition` so the page smoothly transitions to dark into the Footer.
  */
-export function WorkClosingCta({ contextLocation }: WorkClosingCtaProps) {
+export function WorkClosingCta({ contextLocation, primaryHref }: WorkClosingCtaProps) {
   const { closingCta } = WORK_CONTENT;
   const { isTouch } = useMotionPreference();
   const setCursor = useUIStore((s) => s.setCursor);
@@ -52,7 +53,7 @@ export function WorkClosingCta({ contextLocation }: WorkClosingCtaProps) {
           <div className="space-y-4">
             <div className="flex flex-wrap items-center gap-4">
               <Button
-                href={closingCta.primaryCta.href}
+                href={primaryHref ?? closingCta.primaryCta.href}
                 variant="primary"
                 onClick={() =>
                   track('work_cta_clicked', {

@@ -185,6 +185,7 @@ export interface ScrollScrubMediaProps {
   manifestUrl: string;
   initialManifest?: ScrollScrubManifest;
   progress?: number;
+  lerpFactor?: number;
   triggerRef?: RefObject<HTMLElement | null>;
   alt: string;
   caption?: string | null;
@@ -193,7 +194,10 @@ export interface ScrollScrubMediaProps {
   priority?: boolean;
   onFirstInteraction?: () => void;
   onCompleted?: () => void;
+  onReady?: () => void;
   className?: string;
+  panelClassName?: string;
+  panelStyle?: React.CSSProperties;
 }
 
 /**
@@ -208,6 +212,7 @@ export function ScrollScrubMedia({
   manifestUrl,
   initialManifest,
   progress: controlledProgress,
+  lerpFactor = 0.12,
   triggerRef,
   alt,
   caption = null,
@@ -216,7 +221,10 @@ export function ScrollScrubMedia({
   priority = false,
   onFirstInteraction,
   onCompleted,
+  onReady,
   className,
+  panelClassName,
+  panelStyle,
 }: ScrollScrubMediaProps) {
   const { reducedMotion, isLowPower } = useMotionPreference();
 
@@ -236,6 +244,7 @@ export function ScrollScrubMedia({
   const dirtyFrameRef = useRef(true);
   const isVisibleRef = useRef(true);
   const hasMarkedDrawnRef = useRef(false);
+  const hasFiredReadyRef = useRef(false);
 
   const framesRef = useRef<Array<DecodedFrameSource | null>>([]);
   const loadedFlagsRef = useRef<boolean[]>([]);
@@ -244,11 +253,13 @@ export function ScrollScrubMedia({
   const hasFiredCompletedRef = useRef(false);
   const onFirstInteractionRef = useRef(onFirstInteraction);
   const onCompletedRef = useRef(onCompleted);
+  const onReadyRef = useRef(onReady);
 
   useEffect(() => {
     onFirstInteractionRef.current = onFirstInteraction;
     onCompletedRef.current = onCompleted;
-  }, [onFirstInteraction, onCompleted]);
+    onReadyRef.current = onReady;
+  }, [onFirstInteraction, onCompleted, onReady]);
 
   // Fetch manifest JSON if not explicitly provided
   useEffect(() => {
@@ -456,7 +467,7 @@ export function ScrollScrubMedia({
       const nextP = lerpScrollProgress(
         currentProgressRef.current,
         targetProgressRef.current,
-        0.12,
+        lerpFactor,
       );
       const progressChanged = Math.abs(nextP - lastDrawnProgressRef.current) > 0.0004;
       currentProgressRef.current = nextP;
@@ -513,6 +524,10 @@ export function ScrollScrubMedia({
       if (!hasMarkedDrawnRef.current) {
         hasMarkedDrawnRef.current = true;
         setHasCanvasDrawn(true);
+        if (!hasFiredReadyRef.current) {
+          hasFiredReadyRef.current = true;
+          onReadyRef.current?.();
+        }
       }
       if (showProgressLabel) {
         setDisplayProgressPct(Math.round(nextP * 100));
@@ -535,7 +550,7 @@ export function ScrollScrubMedia({
       framesRef.current = [];
       loadedFlagsRef.current = [];
     };
-  }, [manifest, reducedMotion, isLowPower, showProgressLabel]);
+  }, [manifest, reducedMotion, isLowPower, showProgressLabel, lerpFactor]);
 
   const posterSrc = reducedMotion ? manifest.posterLast : manifest.posterFirst;
 
@@ -558,8 +573,12 @@ export function ScrollScrubMedia({
           backgroundImage: manifest.blurDataURL ? `url(${manifest.blurDataURL})` : undefined,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          ...panelStyle,
         }}
-        className="relative mx-auto w-full max-h-[78vh] overflow-hidden rounded-card border border-line"
+        className={cn(
+          'relative mx-auto w-full max-h-[78vh] overflow-hidden rounded-card border border-line',
+          panelClassName,
+        )}
       >
         {/* Instant server-rendered poster (poster-last under reduced motion / no-JS, poster-first otherwise) */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -571,6 +590,12 @@ export function ScrollScrubMedia({
           loading={priority ? 'eager' : 'lazy'}
           decoding="async"
           data-testid="scroll-scrub-poster"
+          onLoad={() => {
+            if (!hasFiredReadyRef.current) {
+              hasFiredReadyRef.current = true;
+              onReadyRef.current?.();
+            }
+          }}
           className={cn(
             'h-full w-full object-cover',
             !reducedMotion && hasCanvasDrawn && 'opacity-0',

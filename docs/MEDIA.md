@@ -95,4 +95,37 @@ pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/m
 2. Run `pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/media/scrub/name-section`.
 3. If the subject changed, update `ABOUT_CONTENT.nameSectionMedia.alt` in `src/features/about/about.content.ts`.
 
+---
 
+## 6. Real Websites & Sample Layouts (`pnpm sites:capture` & `pnpm sites:export`)
+
+The **Websites** category (`src/content/projects.ts`) contains 4 real websites built by Iséoluwa (`kind: "real"`) and 2 clearly labelled sample layouts (`kind: "sample"`):
+
+| # | Slug | Title | URL | Kind | Capture & Export Status |
+|---|---|---|---|---|---|
+| 1 | `icestein-grillz` | **Icestein Grillz** | `https://www.icesteinjewelers.com/` | `real` | Live desktop & mobile screenshots captured (`assets/originals/sites/icestein-grillz/`); exported to `public/media/projects/icestein-grillz/{hero,gallery-1,gallery-2}.webp` |
+| 2 | `crtx-nutrition` | **CRTX Nutrition** | `https://crtxnutrition.com/` | `real` | Live desktop & mobile screenshots captured (`assets/originals/sites/crtx-nutrition/`); exported to `public/media/projects/crtx-nutrition/{hero,gallery-1,gallery-2}.webp` |
+| 3 | `divathea` | **Divathea** | `https://divathea.com/` | `real` | Blocked by anti-bot challenge during automated headless capture; uses neutral factual copy (`"A website designed and built for Divathea."`) and clean browser-chrome showcase frames (`public/media/projects/divathea/{hero,gallery-1,gallery-2}.webp`) until manual screenshots are placed in `assets/originals/sites/divathea/` |
+| 4 | `richard-portfolio` | **Richard: Web Designer & Developer** | `https://senpaididit.vercel.app/` | `real` | Live desktop & mobile screenshots captured (`assets/originals/sites/richard-portfolio/`); exported to `public/media/projects/richard-portfolio/{hero,gallery-1,gallery-2}.webp` |
+| 5 | `sample-wine-vineyard` | **Wine and vineyard website** | ThemeForest preview (`61415625`) | `sample` | Clearly labelled `SAMPLE LAYOUT` (`noindex`, excluded from `sitemap.xml` and JSON-LD, no external live link) |
+| 6 | `sample-fashion-store` | **Fashion store website** | ThemeForest preview (`38493181`) | `sample` | Clearly labelled `SAMPLE LAYOUT` (`noindex`, excluded from `sitemap.xml` and JSON-LD, no external live link) |
+
+### Commands
+```bash
+# 1. Capture live desktop (1440x900 @2x) and mobile (390x844 @2x) screenshots into assets/originals/sites/<slug>/:
+pnpm sites:capture
+
+# Skip sites that already have all 5 PNGs in assets/originals/sites/<slug>/:
+pnpm sites:capture -- --skip-existing
+
+# 2. Compose and export 16:9 hero.webp (2400x1350, <= 300 KB), 4:5 gallery-1.webp (1600x2000, <= 250 KB),
+#    and 16:9 gallery-2.webp (2400x1350, <= 250 KB) into public/media/projects/<slug>/:
+pnpm sites:export
+```
+
+### Replacing Manual Screenshots or Hiding Sample Layouts
+- **To supply manual screenshots for `divathea` (or any site behind a bot wall)**:
+  1. Save `desktop-hero.png`, `desktop-section-1.png`, `desktop-section-2.png`, `mobile-hero.png`, and `mobile-section-1.png` into `assets/originals/sites/divathea/`.
+  2. Run `pnpm sites:export` to regenerate `public/media/projects/divathea/{hero,gallery-1,gallery-2}.webp`.
+- **To hide the two `SAMPLE LAYOUT` entries once more real client websites are ready**:
+  - Flip `export const SHOW_SAMPLE_PROJECTS = false;` in `src/config/site.ts`.

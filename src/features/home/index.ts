@@ -3,6 +3,7 @@ export { Statement } from './sections/Statement';
 export { SoundFamiliar } from './sections/SoundFamiliar';
 export { WhatWeDo } from './sections/WhatWeDo';
 export { SelectedWork } from './sections/SelectedWork';
+export { RecentBuildsStrip } from './sections/RecentBuildsStrip';
 export { WhyIseoluwa } from './sections/WhyIseoluwa';
 export { HowItWorks } from './sections/HowItWorks';
 export { Packages } from './sections/Packages';

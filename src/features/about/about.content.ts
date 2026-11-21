@@ -79,8 +79,8 @@ export const ABOUT_CONTENT = {
     ],
     statement:
       'Iseoluwa means "the work of God." It is the standard we hold ourselves to. We dot every i, cross every t, and iron out every rough edge, because we treat every project as work done unto the Lord.',
-    // TODO: Confirm phonetic pronunciation with founder
-    pronunciation: '[Pronunciation: ee-sheh-oh-loo-wah]',
+    // TODO: confirm with the founder
+    pronunciation: 'Pronounced ee-sheh-oh-loo-wah',
   },
 
   nameSectionMedia: {
@@ -254,7 +254,7 @@ export const ABOUT_CONTENT = {
     sectionLabel: '06 / THE NETWORK',
     headline: 'A small core, a trusted network.',
     body: 'We work with a vetted network of designers, developers, and marketers, which lets us deliver quickly without losing quality. Every project is led by our founders and checked against the same standard.',
-    rolesLine: ['DESIGNERS', 'DEVELOPERS', 'MARKETERS', '[MORE SOON]'],
+    rolesLine: ['DESIGNERS', 'DEVELOPERS', 'MARKETERS', 'AND MORE SOON'],
     // Do not invent team members. Render profile cards only when entries exist.
     team: [] as TeamMemberProfile[],
   },
@@ -263,21 +263,21 @@ export const ABOUT_CONTENT = {
     sectionLabel: '07 / REACH',
     body: 'We work with clients worldwide through video calls, shared project boards, and email, and we agree meeting times that suit your time zone.',
     regions: [
-      // TODO: Replace `[Overlap hours]` placeholders with actual studio overlap hours per region
+      // TODO: confirm studio overlap hours per region
       {
         id: 'africa',
         name: 'Africa',
-        overlapHours: '[Overlap hours: 09:00 – 18:00 WAT / CAT]',
+        overlapHours: 'Overlap hours: 09:00 – 18:00 WAT / CAT',
       },
       {
         id: 'europe',
         name: 'Europe',
-        overlapHours: '[Overlap hours: 09:00 – 18:00 GMT / CET]',
+        overlapHours: 'Overlap hours: 09:00 – 18:00 GMT / CET',
       },
       {
         id: 'americas',
         name: 'the Americas',
-        overlapHours: '[Overlap hours: 08:00 – 14:00 EST / PST]',
+        overlapHours: 'Overlap hours: 08:00 – 14:00 EST / PST',
       },
     ] satisfies ReachRegion[],
   },

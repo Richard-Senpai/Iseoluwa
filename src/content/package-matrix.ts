@@ -238,7 +238,7 @@ export const PACKAGE_TERMS: readonly PackageTermItem[] = [
     id: 'revisions',
     title: 'Revisions',
     detail:
-      'Each design stage includes [2 rounds per design stage] so feedback stays structured and timelines stay predictable.',
+      'Each design stage includes 2 rounds per design stage so feedback stays structured and timelines stay predictable.',
   },
   {
     id: 'ownership',

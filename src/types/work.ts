@@ -1,5 +1,7 @@
 export type WorkCategorySlug = 'branding' | 'websites' | 'marketing';
 
+export type ProjectKind = 'real' | 'concept' | 'sample';
+
 export type MediaSlotType = 'placeholder' | 'image' | 'video';
 
 export type MediaAspectRatio = '16/9' | '4/5' | '1/1';
@@ -12,6 +14,7 @@ export interface ProjectMediaSlot {
   aspectRatio: MediaAspectRatio;
   src?: string;
   poster?: string;
+  blurDataURL?: string;
   alt: string;
   layout?: GalleryBlockLayout;
 }
@@ -43,17 +46,21 @@ export interface WorkCategory {
 export interface ProjectItem {
   slug: string;
   category: WorkCategorySlug;
+  kind: ProjectKind;
   number: string;
   title: string;
-  year: string;
+  year?: string;
   services: string[];
-  client: string;
-  role: string;
+  client?: string;
+  role?: string;
+  liveUrl?: string;
+  builtWith?: string[];
+  highlights?: string[];
   result: string;
   summary: string;
-  challenge: string;
-  approach: string;
-  outcome: string;
+  challenge?: string;
+  approach?: string;
+  outcome?: string;
   /** Whether this project is a studio concept project */
   isConcept?: boolean;
   /** Featured on Home page "Selected work" section */

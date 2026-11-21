@@ -81,7 +81,7 @@ export function Media({
         aria-hidden="true"
         className="pointer-events-none absolute inset-6 border border-dashed border-line/60"
       />
-      {label && (
+      {label && process.env.NODE_ENV !== 'production' && (
         <span className="text-label-mono relative z-10 border border-line bg-bg px-3 py-1.5 text-ink-muted">
           {label}
         </span>

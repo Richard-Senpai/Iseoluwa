@@ -187,9 +187,11 @@ export function ZoomTransition() {
               {activeRequest.title}
             </span>
           )}
-          <span className="text-label-mono border border-line bg-bg/85 px-3.5 py-1.5 text-ink-muted">
-            {activeRequest?.label ?? 'PROJECT MEDIA 16:9'}
-          </span>
+          {activeRequest?.label && (
+            <span className="text-label-mono border border-line bg-bg/85 px-3.5 py-1.5 text-ink-muted">
+              {activeRequest.label}
+            </span>
+          )}
         </div>
       </div>
     </div>

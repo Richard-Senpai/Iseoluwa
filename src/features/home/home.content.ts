@@ -71,6 +71,14 @@ export interface HomeContent {
     startProjectCta: { label: string; href: string };
     reassurance: string;
   };
+  recentBuilds: {
+    sectionLabel: string;
+    headline: string;
+    liveBadgeLabel: string;
+    visitLiveLabel: string;
+    viewCaseStudyLabel: string;
+    seeAllWebsitesCta: { label: string; href: string };
+  };
   whyIseoluwa: {
     sectionLabel: string;
     headline: string;
@@ -153,7 +161,7 @@ export const HOME_CONTENT: HomeContent = {
           'Strategy, logo, and a complete visual identity that people remember and trust.',
         tags: ['STRATEGY', 'IDENTITY', 'GUIDELINES'],
         previewLabel: 'BRAND PREVIEW 4:5',
-        previewSrc: '/images/work/branding/branding-01.png',
+        previewSrc: '/media/concepts/ayo-roasters/hero.webp',
       },
       {
         number: '02',
@@ -163,6 +171,7 @@ export const HOME_CONTENT: HomeContent = {
           'Fast, beautiful, full-stack websites and web apps, designed and built by the same team.',
         tags: ['UI/UX', 'WEB DEVELOPMENT', 'E-COMMERCE'],
         previewLabel: 'BUILD PREVIEW 4:5',
+        previewSrc: '/media/projects/icestein-grillz/hero.webp',
       },
       {
         number: '03',
@@ -172,6 +181,7 @@ export const HOME_CONTENT: HomeContent = {
           'Social media, SEO, ads, and email that bring the right people to your door.',
         tags: ['SOCIAL', 'SEO', 'ADS', 'EMAIL'],
         previewLabel: 'GROW PREVIEW 4:5',
+        previewSrc: '/media/concepts/fresh-basket/hero.webp',
       },
     ],
     exploreLink: {
@@ -192,6 +202,17 @@ export const HOME_CONTENT: HomeContent = {
       href: '/contact',
     },
     reassurance: 'Free 20-minute call. No obligation.',
+  },
+  recentBuilds: {
+    sectionLabel: 'RECENT BUILDS',
+    headline: 'Websites we have built.',
+    liveBadgeLabel: 'LIVE SITE',
+    visitLiveLabel: 'Visit live',
+    viewCaseStudyLabel: 'Case study',
+    seeAllWebsitesCta: {
+      label: 'See all website projects',
+      href: '/work/websites',
+    },
   },
   whyIseoluwa: {
     sectionLabel: '04 / WHY ISÉOLUWA',

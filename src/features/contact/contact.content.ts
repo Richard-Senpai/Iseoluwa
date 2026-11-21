@@ -110,8 +110,7 @@ export const CONTACT_CONTENT = {
     copiedLabel: SITE_CONTENT.contact.copiedLabel,
     replyTimeLabel: 'REPLY TIME',
     replyTimeText: 'We reply within one business day.',
-    // TODO: Replace `[Mon-Fri, 9:00-18:00 WAT / overlaps with Europe and the Americas]` with final hours if needed
-    workingHoursMono: '[Mon-Fri, 9:00-18:00 WAT / overlaps with Europe and the Americas]',
+    workingHoursMono: 'Mon–Fri, 09:00–18:00 WAT / overlaps with Europe and the Americas',
     whatHappensNextHeading: 'WHAT HAPPENS NEXT',
     whatHappensNextSteps: [
       {

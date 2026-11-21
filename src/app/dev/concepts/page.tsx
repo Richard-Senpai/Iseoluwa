@@ -4,6 +4,11 @@ import { BrandBoard } from '@/features/concepts/BrandBoard';
 import { BrowserFrame } from '@/features/concepts/BrowserFrame';
 import { SocialGrid } from '@/features/concepts/SocialGrid';
 import {
+  SiteShowcase,
+  getSiteEntryBySlug,
+  type SiteShowcaseFrameId,
+} from '@/features/concepts/SiteShowcase';
+import {
   CONCEPT_CONFIGS,
   getConceptConfigBySlug,
   type ConceptBrandConfig,
@@ -11,14 +16,15 @@ import {
 } from '@/features/concepts/concepts.config';
 
 export const metadata: Metadata = {
-  title: 'Concept Compositions (Dev Only) | Iseoluwa',
+  title: 'Concept & Site Compositions (Dev Only) | Iseoluwa',
   robots: {
     index: false,
     follow: false,
   },
 };
 
-const VALID_FRAMES: readonly ConceptFrameId[] = ['hero', 'gallery-01', 'gallery-02'];
+const VALID_CONCEPT_FRAMES: readonly ConceptFrameId[] = ['hero', 'gallery-01', 'gallery-02'];
+const VALID_SITE_FRAMES: readonly SiteShowcaseFrameId[] = ['hero', 'gallery-1', 'gallery-2'];
 
 function renderConceptFrame(config: ConceptBrandConfig, frame: ConceptFrameId) {
   if (config.kind === 'branding') {
@@ -47,25 +53,36 @@ export default async function DevConceptsPage({ searchParams }: DevConceptsPageP
 
   const params = await searchParams;
   const slugParam = params.slug;
-  const frameParam = params.frame as ConceptFrameId | undefined;
+  const frameParam = params.frame;
 
-  if (slugParam && frameParam && VALID_FRAMES.includes(frameParam)) {
-    const config = getConceptConfigBySlug(slugParam);
-    if (!config) {
-      notFound();
+  if (slugParam && frameParam) {
+    const siteEntry = getSiteEntryBySlug(slugParam);
+    if (siteEntry && VALID_SITE_FRAMES.includes(frameParam as SiteShowcaseFrameId)) {
+      return (
+        <div className="inline-block bg-black p-0">
+          <SiteShowcase site={siteEntry} frame={frameParam as SiteShowcaseFrameId} />
+        </div>
+      );
     }
-    return (
-      <div className="inline-block bg-black p-0">
-        {renderConceptFrame(config, frameParam)}
-      </div>
-    );
+
+    if (VALID_CONCEPT_FRAMES.includes(frameParam as ConceptFrameId)) {
+      const config = getConceptConfigBySlug(slugParam);
+      if (!config) {
+        notFound();
+      }
+      return (
+        <div className="inline-block bg-black p-0">
+          {renderConceptFrame(config, frameParam as ConceptFrameId)}
+        </div>
+      );
+    }
   }
 
   return (
     <div className="space-y-16 bg-bg py-28 px-8 text-ink">
       <div className="mx-auto max-w-[1200px] space-y-2 border-b border-line pb-6">
         <p className="text-label-mono text-ink-muted">DEV-ONLY ROUTE · /DEV/CONCEPTS</p>
-        <h1 className="text-display-l">12 Studio Concept Projects (36 Frames)</h1>
+        <h1 className="text-display-l">Studio Concept & Website Showcases</h1>
       </div>
 
       <div className="mx-auto max-w-[1200px] space-y-20">

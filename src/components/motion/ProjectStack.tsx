@@ -265,7 +265,24 @@ export function ProjectStack({
                     <TagList items={project.services} />
                   </div>
                   <div className="flex items-center gap-2.5">
-                    {SHOW_CONCEPT_BADGE && project.isConcept && (
+                    {project.kind === 'real' && (
+                      <span
+                        data-testid="live-site-badge"
+                        className="text-label-mono inline-flex items-center gap-1.5 rounded-pill border border-line px-2.5 py-0.5 text-ink"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                        <span>{WORK_CONTENT.stage3.liveBadgeLabel}</span>
+                      </span>
+                    )}
+                    {project.kind === 'sample' && (
+                      <span
+                        data-testid="sample-layout-badge"
+                        className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
+                      >
+                        {WORK_CONTENT.stage3.sampleBadgeLabel}
+                      </span>
+                    )}
+                    {SHOW_CONCEPT_BADGE && (project.kind === 'concept' || project.isConcept) && (
                       <span
                         data-testid="concept-project-badge"
                         className="text-label-mono rounded-pill border border-line px-2.5 py-0.5 text-ink-muted"
@@ -273,7 +290,9 @@ export function ProjectStack({
                         {WORK_CONTENT.stage3.conceptBadgeLabel}
                       </span>
                     )}
-                    <span className="text-label-mono text-ink-muted">{project.year}</span>
+                    {project.year && (
+                      <span className="text-label-mono text-ink-muted">{project.year}</span>
+                    )}
                   </div>
                 </div>
 

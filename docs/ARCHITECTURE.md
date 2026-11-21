@@ -212,6 +212,20 @@ To enable Aeonik in production:
   - Progressively loads and decodes frames via `createImageBitmap` in stride order (`first`, `last`, every `8th`, `4th`, `2nd`, then remaining), selecting the mobile frame set on viewports `< 768px` or when `saveData` is enabled.
   - Subscribes to the shared `gsap.ticker` while intersecting the viewport, smoothing scroll progress with a `0.12` lerp (`lerpScrollProgress`) and alpha-blending the two neighbouring frames (`mapProgressToFramePosition`) on a `<canvas>` (`devicePixelRatio` capped at 2, `imageSmoothingQuality = "high"`).
 
+---
 
+## 10. Pinned "01 / THE NAME" Scene (`NameScene.tsx` & `TheName.tsx`)
 
+### Root Cause of Why the Previous Name Layout Did Not Stick
+- In the initial implementation of `TheName.tsx`, `<ScrollScrubMedia>` was placed inside a narrow right column (`lg:col-span-5`) beside the `isé / oluwa` split lines and statement using CSS `lg:sticky lg:top-28`, and ran its own independent `ScrollTrigger` (`start: 'top 65%'`, `end: 'bottom 35%'`) while `<ScrollText>` ran a separate `ScrollTrigger` on the statement paragraph. Because the section was never pinned via a single shared GSAP `ScrollTrigger` (`pin: true`) and the statement lived in a side column rather than beneath the animation inside one pinned stage, the animation scrolled past in normal flow while the text revealed separately.
 
+### Fix (`src/features/about/sections/NameScene.tsx`)
+1. `TheName.tsx` renders the `"01 / THE NAME"` header and the `"isé means work. oluwa means the Lord."` split lines first in normal scrolling.
+2. Directly after those lines, `<NameScene />` (`data-testid="name-pinned-scene"`) renders a single pinned stage (`~10 of 12` columns centered on desktop, full width on mobile) containing:
+   - **Top**: `<ScrollScrubMedia>` centered with height `min(42vh, 340px)` on mobile up to `min(48vh, 450px)` on desktop (`aspect-ratio: 9 / 16`, `width: auto`) so the animation and statement always fit inside the viewport minus the header at `1440×900`, `1280×720`, `1024×768`, `390×844`, and `360×640`.
+   - **Bottom**: The statement (`"What we build is an offering — made with care, honesty, and excellence, as work done unto the Lord."`) centered directly beneath the animation (`max-width: 38ch`).
+3. A single GSAP `ScrollTrigger` (`pin: true`, `pinSpacing: true`, `anticipatePin: 1`, `scrub: 0.4`, `end: '+=250vh'`) drives both `ScrollScrubMedia` (`progress` prop) and the word-by-word colour lighting (`--ink-muted` -> `--ink`, zero opacity fade, zero blur):
+   - `0% – 8%`: lead-in hold (`frame 0`, all words unlit)
+   - `8% – 92%`: active scrub across all 190 frames and all 19 statement words in lockstep
+   - `92% – 100%`: tail hold (final frame `189` and 100% of words including `"Lord."` lit before unpinning)
+4. Under `prefers-reduced-motion: reduce` or no-JS, the stage is unpinned (`data-pinned="false"`), displaying `poster-last.webp` above the fully lit statement.

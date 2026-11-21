@@ -1,5 +1,7 @@
+import { SHOW_SAMPLE_PROJECTS } from '@/config/site';
 import type {
   ProjectItem,
+  ProjectKind,
   ProjectMediaSlot,
   ProjectPhotoCredit,
   WorkCategory,
@@ -8,6 +10,7 @@ import type {
 
 export type {
   ProjectItem,
+  ProjectKind,
   ProjectMediaSlot,
   ProjectPhotoCredit,
   WorkCategory,
@@ -51,6 +54,9 @@ export const WORK_CATEGORIES: WorkCategory[] = [
   },
 ];
 
+const DEFAULT_BLUR_DATA_URL =
+  'data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADQAQCdASoQAAkAAUAmJaQAA3AA/vuUAAA=';
+
 interface ConceptProjectParams {
   slug: string;
   category: WorkCategorySlug;
@@ -73,6 +79,7 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
   const heroSlot: ProjectMediaSlot = {
     type: 'image',
     src: `${basePath}/hero.webp`,
+    blurDataURL: DEFAULT_BLUR_DATA_URL,
     label: `${params.title.toUpperCase()} · HERO 16:9`,
     aspectRatio: '16/9',
     alt: `${params.title} concept hero showcase`,
@@ -84,6 +91,7 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
           type: 'video',
           src: `${basePath}/loop.webm`,
           poster: `${basePath}/gallery-01.webp`,
+          blurDataURL: DEFAULT_BLUR_DATA_URL,
           label: `${params.title.toUpperCase()} · MOTION WALKTHROUGH 16:9`,
           aspectRatio: '16/9',
           alt: `${params.title} interactive walkthrough loop`,
@@ -92,6 +100,7 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
       : {
           type: 'image',
           src: `${basePath}/gallery-01.webp`,
+          blurDataURL: DEFAULT_BLUR_DATA_URL,
           label: `${params.title.toUpperCase()} · SYSTEM OVERVIEW 16:9`,
           aspectRatio: '16/9',
           alt: `${params.title} system overview`,
@@ -100,6 +109,7 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
     {
       type: 'image',
       src: `${basePath}/gallery-02.webp`,
+      blurDataURL: DEFAULT_BLUR_DATA_URL,
       label: `${params.title.toUpperCase()} · APPLICATION DETAIL 4:5`,
       aspectRatio: '4/5',
       alt: `${params.title} application detail`,
@@ -110,6 +120,7 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
   return {
     slug: params.slug,
     category: params.category,
+    kind: 'concept',
     number: params.number,
     title: params.title,
     year: '2026',
@@ -134,9 +145,88 @@ function createConceptProject(params: ConceptProjectParams): ProjectItem {
   };
 }
 
+interface WebsiteProjectParams {
+  slug: string;
+  kind: 'real' | 'sample';
+  number: string;
+  title: string;
+  services: string[];
+  client?: string;
+  role?: string;
+  year?: string;
+  liveUrl?: string;
+  summary: string;
+  highlights?: string[];
+  builtWith?: string[];
+  featured?: boolean;
+}
+
+function createWebsiteProject(params: WebsiteProjectParams): ProjectItem {
+  const basePath = `/media/projects/${params.slug}`;
+
+  const heroSlot: ProjectMediaSlot = {
+    type: 'image',
+    src: `${basePath}/hero.webp`,
+    blurDataURL: DEFAULT_BLUR_DATA_URL,
+    label: `${params.title.toUpperCase()} · HERO 16:9`,
+    aspectRatio: '16/9',
+    alt:
+      params.kind === 'real'
+        ? `${params.title} live website showcase`
+        : `${params.title} sample layout showcase`,
+  };
+
+  const gallerySlots: ProjectMediaSlot[] = [
+    {
+      type: 'image',
+      src: `${basePath}/gallery-1.webp`,
+      blurDataURL: DEFAULT_BLUR_DATA_URL,
+      label: `${params.title.toUpperCase()} · MOBILE SCREENS 4:5`,
+      aspectRatio: '4/5',
+      alt: `${params.title} mobile interface views`,
+      layout: 'offset-left',
+    },
+    {
+      type: 'image',
+      src: `${basePath}/gallery-2.webp`,
+      blurDataURL: DEFAULT_BLUR_DATA_URL,
+      label: `${params.title.toUpperCase()} · PAGE SECTIONS 16:9`,
+      aspectRatio: '16/9',
+      alt: `${params.title} desktop section view`,
+      layout: 'full',
+    },
+  ];
+
+  return {
+    slug: params.slug,
+    category: 'websites',
+    kind: params.kind,
+    number: params.number,
+    title: params.title,
+    year: params.year,
+    services: params.services,
+    client: params.client,
+    role: params.role,
+    liveUrl: params.liveUrl,
+    builtWith: params.builtWith,
+    highlights: params.highlights,
+    result: params.summary,
+    summary: params.summary,
+    isConcept: false,
+    featured: params.featured ?? false,
+    featuredOnHome: params.featured ?? false,
+    href: `/work/websites/${params.slug}`,
+    media: {
+      ...heroSlot,
+      hero: heroSlot,
+      gallery: gallerySlots,
+    },
+  };
+}
+
 /**
- * Single source of truth for all 12 studio concept projects (4 per category).
- * Built per Fixes Prompt Section 5.1 & 5.2 and Tech Stack Section 12.
+ * Single source of truth for all studio projects across Branding, Websites, and Marketing.
+ * Websites category contains 4 real websites built by Iséoluwa + 2 clearly labelled sample layouts.
  */
 export const ALL_PROJECTS: ProjectItem[] = [
   // =========================================================================
@@ -242,105 +332,104 @@ export const ALL_PROJECTS: ProjectItem[] = [
   }),
 
   // =========================================================================
-  // 02 / WEBSITES (4 Concept Projects)
+  // 02 / WEBSITES (4 Real Websites + 2 Sample Layouts)
   // =========================================================================
-  createConceptProject({
-    slug: 'haven-stays',
-    category: 'websites',
+  createWebsiteProject({
+    slug: 'icestein-grillz',
+    kind: 'real',
     number: '01',
-    title: 'Haven Stays',
-    services: ['UI/UX', 'BOOKING FLOW', 'DESIGN SYSTEM', 'WEB APP'],
+    title: 'Icestein Grillz',
+    client: 'Icestein Grillz',
+    role: 'Web Design & Development',
+    services: ['E-COMMERCE', 'WEB DESIGN', 'WEB DEVELOPMENT'],
+    liveUrl: 'https://www.icesteinjewelers.com/',
     featured: true,
-    hasVideoLoop: true,
-    result: 'An editorial short-stay booking experience with instant date and neighbourhood filtering.',
     summary:
-      'Haven Stays is a curated short-stay apartment platform for design-led residences in Lagos and Abuja. We designed and prototyped the search experience, neighbourhood listing grid, apartment detail view, and transparent date picker.',
-    challenge:
-      'Short-stay platforms often bury guests in cluttered filters and surprise checkout fees. Haven Stays needed to feel like flipping through an architectural magazine while keeping availability, power backup details, and nightly pricing transparent.',
-    approach:
-      'Set in warm stone (#F5F2EC), charcoal (#151514), and deep olive (#3B523E), the interface pairs sunlit interior photography with a sticky instant-quote booking bar and verified amenity badges.',
-    outcome:
-      'A calm, fast-browsing booking journey that takes guests from neighbourhood discovery to confirmed stay in three clear steps.',
-    credits: [
-      {
-        photographer: 'Unsplash Interior Architecture Collection',
-        source: 'Unsplash',
-        url: 'https://unsplash.com/s/photos/warm-minimal-apartment-interior',
-        unsplashSearchUrl: 'https://unsplash.com/s/photos/minimalist-apartment-living-room',
-      },
+      'Online store and custom-order experience for a Houston custom grillz and fine-jewelry atelier.',
+    highlights: [
+      'Product catalog across custom grillz, chains, pendants, rings, and earrings with metal-purity options (10K, 14K, 18K, 22K gold, silver, platinum) and stone choices (VVS diamond, lab diamond, moissanite).',
+      'Four-step order flow: choose design, free mold kit shipped to the customer, handcrafted in Houston, insured shipping.',
+      'Direct custom-inquiry and appointment paths via phone, WhatsApp, and showroom details.',
+    ],
+    builtWith: [
+      'Responsive storefront layout',
+      'Custom product options',
+      'Catalog filtering',
+      'Direct inquiry flow',
     ],
   }),
-  createConceptProject({
-    slug: 'adire-atelier',
-    category: 'websites',
+  createWebsiteProject({
+    slug: 'crtx-nutrition',
+    kind: 'real',
     number: '02',
-    title: 'Adire Atelier',
-    services: ['E-COMMERCE', 'EDITORIAL UI', 'STORYTELLING', 'CART DRAWER'],
-    result: 'A tactile digital flagship honouring hand-dyed cassava-resist indigo textiles.',
+    title: 'CRTX Nutrition',
+    client: 'CRTX Nutrition',
+    role: 'Web Design & Development',
+    services: ['E-COMMERCE', 'LANDING PAGE', 'PRODUCT STORE'],
+    liveUrl: 'https://crtxnutrition.com/',
     summary:
-      'Adire Atelier is a contemporary Nigerian textile and ready-to-wear online store. The web experience weaves editorial lookbook chapters directly into the product page, dye-process notes, and slide-over cart drawer.',
-    challenge:
-      'Standard e-commerce templates flatten craft-led garments into generic thumbnails. Adire Atelier needed a storefront that celebrates the dye artisans in Abeokuta and the texture of each yard without slowing down checkout.',
-    approach:
-      'Anchored in deep indigo (#162647), warm bone (#F6F3EC), and earth ochre (#C78A3B), we designed full-height lookbook splits, macro fabric zoom panels, and a single-drawer checkout with dual NGN/USD currency support.',
-    outcome:
-      'An editorial flagship store that pairs cultural provenance with frictionless modern e-commerce.',
-    credits: [
-      {
-        photographer: 'Unsplash Textile & Craft Editorial',
-        source: 'Unsplash',
-        url: 'https://unsplash.com/s/photos/indigo-fabric-textile',
-        unsplashSearchUrl: 'https://unsplash.com/s/photos/hand-dyed-indigo-fabric',
-      },
+      'Direct-to-consumer storefront for a single-SKU cognitive supplement, with product breakdown, ingredient story, and bundle ordering.',
+    highlights: [
+      'Focused single-product layout built around clarity, ingredient breakdown, and usage guidance.',
+      'Multi-pack bundle selector (1-pack, 2-pack, 3-pack) with direct checkout.',
+      'Structured FAQ, guarantee, and customer-review sections.',
+    ],
+    builtWith: [
+      'Responsive single-product storefront',
+      'Bundle pricing selector',
+      'Conversion-focused product page',
     ],
   }),
-  createConceptProject({
-    slug: 'ledgerly',
-    category: 'websites',
+  createWebsiteProject({
+    slug: 'divathea',
+    kind: 'real',
     number: '03',
-    title: 'Ledgerly',
-    services: ['PRODUCT SITE', 'DASHBOARD UI', 'PRICING', 'MOBILE VIEW'],
-    result: 'A crisp product marketing site and interactive cashflow preview for African SMEs.',
-    summary:
-      'Ledgerly is an invoicing, payout, and cashflow workspace built for growing African businesses. We designed the marketing flagship, interactive live dashboard preview, transparent pricing table, and responsive mobile ledger.',
-    challenge:
-      'Finance software pages often overwhelm business owners with abstract charts or hide transaction fees behind enterprise forms. Ledgerly wanted visitors to understand multi-currency invoicing and settlement timelines in seconds.',
-    approach:
-      'Using near-black (#0D1110), signal mint (#19E37A), and crisp off-white (#F5F5F3), we built an interactive hero ledger showing NGN and USD receivables side by side, paired with a plain-English fee calculator.',
-    outcome:
-      'A high-contrast product site that demonstrates product speed and clarity before a user even signs up.',
-    credits: [
-      {
-        photographer: 'Unsplash Modern Workspace Collection',
-        source: 'Unsplash',
-        url: 'https://unsplash.com/s/photos/fintech-dashboard-workspace',
-        unsplashSearchUrl: 'https://unsplash.com/s/photos/minimal-desk-laptop',
-      },
-    ],
+    title: 'Divathea',
+    client: 'Divathea',
+    role: 'Web Design & Development',
+    services: ['WEB DESIGN', 'WEB DEVELOPMENT'],
+    liveUrl: 'https://divathea.com/',
+    summary: 'A website designed and built for Divathea.',
+    highlights: [],
+    builtWith: [],
   }),
-  createConceptProject({
-    slug: 'lumen-dental',
-    category: 'websites',
+  createWebsiteProject({
+    slug: 'richard-portfolio',
+    kind: 'real',
     number: '04',
-    title: 'Lumen Dental',
-    services: ['CLINIC WEBSITE', 'ONLINE BOOKING', 'TREATMENTS', 'PATIENT FAQ'],
-    result: 'A reassuring, anxiety-free clinic website with two-minute appointment booking.',
+    title: 'Richard: Web Designer & Developer',
+    client: 'Richard (Iséoluwa founder)',
+    role: 'Design & Full-Stack Engineering',
+    services: ['PORTFOLIO', 'INTERACTIVE WEB', 'FULL-STACK'],
+    liveUrl: 'https://senpaididit.vercel.app/',
     summary:
-      'Lumen Dental is a modern preventative and cosmetic dental practice concept. We designed a serene patient experience featuring direct slot booking, transparent treatment guides, doctor introductions, and plain-language FAQs.',
-    challenge:
-      'Clinical websites frequently feel cold and intimidating, causing patients to postpone routine care. Lumen wanted their digital front door to feel as calm and welcoming as their physical waiting lounge.',
-    approach:
-      'We paired soft alabaster (#F7F6F2), deep teal (#133B3A), and warm grey (#6E6D68) with clear treatment timelines, upfront pricing bands, and an embedded appointment selector that works effortlessly on mobile.',
-    outcome:
-      'A warm, accessible healthcare website that replaces clinical jargon with calm patient guidance.',
-    credits: [
-      {
-        photographer: 'Unsplash Calm Interior & Healthcare Collection',
-        source: 'Unsplash',
-        url: 'https://unsplash.com/s/photos/modern-clinic-interior',
-        unsplashSearchUrl: 'https://unsplash.com/s/photos/minimal-wellness-clinic',
-      },
+      'Personal portfolio of Iséoluwa’s founder, showcasing full-stack web builds across React, Next.js, TypeScript, and WordPress.',
+    highlights: [
+      'Project showcase spanning e-commerce, hospitality, publishing, and service businesses.',
+      'Interactive section layout with custom motion and live project previews.',
+      'Direct contact flow with email, phone, and inquiry form.',
     ],
+    builtWith: ['Next.js', 'React', 'TypeScript', 'Tailwind CSS', 'Motion'],
+  }),
+  createWebsiteProject({
+    slug: 'sample-wine-vineyard',
+    kind: 'sample',
+    number: '05',
+    title: 'Wine and vineyard website',
+    services: ['SAMPLE LAYOUT', 'E-COMMERCE', 'HOSPITALITY'],
+    summary: 'A sample layout shown while real projects are being added.',
+    highlights: [],
+    builtWith: [],
+  }),
+  createWebsiteProject({
+    slug: 'sample-fashion-store',
+    kind: 'sample',
+    number: '06',
+    title: 'Fashion store website',
+    services: ['SAMPLE LAYOUT', 'E-COMMERCE', 'RETAIL'],
+    summary: 'A sample layout shown while real projects are being added.',
+    highlights: [],
+    builtWith: [],
   }),
 
   // =========================================================================
@@ -446,9 +535,33 @@ export const ALL_PROJECTS: ProjectItem[] = [
   }),
 ];
 
+const KIND_PRIORITY: Record<ProjectKind, number> = {
+  real: 0,
+  concept: 1,
+  sample: 2,
+};
+
+/**
+ * Filters out `kind === "sample"` entries when `SHOW_SAMPLE_PROJECTS` is false,
+ * and orders `kind === "real"` projects before `concept` and `sample`.
+ */
+export function getVisibleProjects(projects: ProjectItem[] = ALL_PROJECTS): ProjectItem[] {
+  return projects
+    .filter((p) => (p.kind === 'sample' ? SHOW_SAMPLE_PROJECTS : true))
+    .slice()
+    .sort((a, b) => KIND_PRIORITY[a.kind] - KIND_PRIORITY[b.kind]);
+}
+
+/**
+ * All 4 real websites built by Iséoluwa (`kind === 'real'`).
+ */
+export const REAL_WEBSITE_PROJECTS: ProjectItem[] = ALL_PROJECTS.filter(
+  (project) => project.category === 'websites' && project.kind === 'real',
+);
+
 /**
  * Featured projects shown on the Home page Selected Work section,
- * derived from `ALL_PROJECTS` (`ayo-roasters`, `haven-stays`, `fresh-basket`).
+ * derived from `ALL_PROJECTS` (`ayo-roasters`, `icestein-grillz`, `fresh-basket`).
  */
 export const PROJECTS_CONTENT: ProjectItem[] = ALL_PROJECTS.filter(
   (project) => project.featured,
@@ -470,7 +583,11 @@ export function getCategoryBySlug(slug: string): WorkCategory | undefined {
 
 export function getProjectsByCategory(category: WorkCategorySlug | string): ProjectItem[] {
   const normalized = normalizeCategorySlug(category);
-  return ALL_PROJECTS.filter((project) => project.category === normalized);
+  const filtered = ALL_PROJECTS.filter((project) => project.category === normalized);
+  return getVisibleProjects(filtered).map((project, idx) => ({
+    ...project,
+    number: String(idx + 1).padStart(2, '0'),
+  }));
 }
 
 export function getProjectBySlug(
@@ -478,9 +595,13 @@ export function getProjectBySlug(
   slug: string,
 ): ProjectItem | undefined {
   const normalized = normalizeCategorySlug(category);
-  return ALL_PROJECTS.find(
+  const found = ALL_PROJECTS.find(
     (project) => project.category === normalized && project.slug === slug,
   );
+  if (found && found.kind === 'sample' && !SHOW_SAMPLE_PROJECTS) {
+    return undefined;
+  }
+  return found;
 }
 
 export function getNextCategory(currentSlug: WorkCategorySlug): WorkCategory {

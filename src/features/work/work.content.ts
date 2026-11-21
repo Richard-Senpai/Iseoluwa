@@ -37,6 +37,8 @@ export interface WorkPageContent {
     };
     sections: {
       overview: string;
+      whatTheSiteDoes: string;
+      howItIsBuilt: string;
       challenge: string;
       approach: string;
       result: string;
@@ -44,7 +46,10 @@ export interface WorkPageContent {
       testimonial: string;
       nextProject: string;
     };
+    liveBadgeLabel: string;
+    sampleBadgeLabel: string;
     conceptBadgeLabel: string;
+    visitLiveSiteLabel: string;
     photoCreditsPrefix: string;
   };
   closingCta: {
@@ -98,6 +103,8 @@ export const WORK_CONTENT: WorkPageContent = {
     },
     sections: {
       overview: '01 / OVERVIEW',
+      whatTheSiteDoes: '02 / WHAT THE SITE DOES',
+      howItIsBuilt: '03 / HOW IT IS BUILT',
       challenge: '02 / THE CHALLENGE',
       approach: '03 / WHAT WE DID',
       result: '04 / THE RESULT',
@@ -105,7 +112,10 @@ export const WORK_CONTENT: WorkPageContent = {
       testimonial: '06 / CLIENT WORDS',
       nextProject: 'NEXT PROJECT',
     },
+    liveBadgeLabel: 'LIVE SITE',
+    sampleBadgeLabel: 'SAMPLE LAYOUT',
     conceptBadgeLabel: 'CONCEPT PROJECT',
+    visitLiveSiteLabel: 'Visit live site',
     photoCreditsPrefix: 'Photo credits:',
   },
   closingCta: {

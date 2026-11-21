@@ -48,7 +48,10 @@ export type AnalyticsEventName =
   | 'package_matrix_viewed'
   | 'currency_switched'
   | 'name_media_first_interaction'
-  | 'name_media_completed';
+  | 'name_media_completed'
+  | 'work_live_site_clicked'
+  | 'home_builds_strip_clicked'
+  | 'work_sample_viewed';
 
 export type AnalyticsEventProps = Record<string, string | number | boolean | undefined>;
 

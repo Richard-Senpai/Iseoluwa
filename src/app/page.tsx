@@ -6,6 +6,7 @@ import {
   SoundFamiliar,
   WhatWeDo,
   SelectedWork,
+  RecentBuildsStrip,
   WhyIseoluwa,
   HowItWorks,
   Packages,
@@ -27,6 +28,7 @@ export default function HomePage() {
       <SoundFamiliar />
       <WhatWeDo />
       <SelectedWork />
+      <RecentBuildsStrip />
       <WhyIseoluwa />
       <HowItWorks />
       <Packages />

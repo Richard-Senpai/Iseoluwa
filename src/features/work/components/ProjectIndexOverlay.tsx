@@ -127,13 +127,24 @@ export function ProjectIndexOverlay({
                 onClick={() => handleJumpToProject(project.slug)}
                 className="group flex w-full flex-col justify-between gap-2 py-5 text-left transition-colors hover:text-line-accent sm:flex-row sm:items-baseline"
               >
-                <span className="flex items-baseline gap-4">
+                <span className="flex flex-wrap items-baseline gap-3">
                   <span className="text-label-mono text-ink-muted group-hover:text-line-accent">
                     {project.number}
                   </span>
                   <span className="text-heading-m text-ink group-hover:text-line-accent">
                     {project.title}
                   </span>
+                  {project.kind === 'real' && (
+                    <span className="text-label-mono inline-flex items-center gap-1 rounded-pill border border-line px-2 py-0.5 text-ink">
+                      <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                      <span>{WORK_CONTENT.stage3.liveBadgeLabel}</span>
+                    </span>
+                  )}
+                  {project.kind === 'sample' && (
+                    <span className="text-label-mono rounded-pill border border-line px-2 py-0.5 text-ink-muted">
+                      {WORK_CONTENT.stage3.sampleBadgeLabel}
+                    </span>
+                  )}
                 </span>
                 <TagList items={project.services} />
               </button>

@@ -130,7 +130,7 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
     }
   });
 
-  test('reduced motion keeps all four member tiles visible and unpinned, and shows static poster-last image in The Name section', async ({
+  test('reduced motion keeps all four member tiles visible and unpinned, and shows static poster-last image above fully lit statement in The Name section', async ({
     page,
   }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -141,13 +141,22 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
       await expect(page.getByTestId(`team-member-card-${id}`)).toBeVisible();
     }
 
+    const pinnedScene = page.getByTestId('name-pinned-scene');
+    await expect(pinnedScene).toHaveAttribute('data-pinned', 'false');
+
     const poster = page.getByTestId('scroll-scrub-poster');
     await expect(poster).toBeVisible();
     await expect(poster).toHaveAttribute('src', '/media/scrub/name-section/poster-last.webp');
     await expect(page.getByTestId('scroll-scrub-canvas')).toHaveCount(0);
+
+    // Every word in the statement is lit under reduced motion
+    const unlitCount = await page
+      .locator('[data-testid="name-statement-word"][data-lit="false"]')
+      .count();
+    expect(unlitCount).toBe(0);
   });
 
-  test('ScrollScrubMedia in 01 / THE NAME loads manifest & posters, renders 9:16 canvas at 1440 and 390 px, and scrubs canvas pixels forward and backward cleanly', async ({
+  test('Pinned NameScene (01 / THE NAME) centers animation above statement, fits inside viewport across 5 sizes, scrubs frames & word lighting in lockstep, and rewinds cleanly', async ({
     page,
   }) => {
     // 1. Verify manifest and posters load with HTTP 200
@@ -160,23 +169,49 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
       expect(res.status(), `GET ${assetUrl}`).toBe(200);
     }
 
-    // 2. Test at both 1440px (desktop sticky) and 390px (mobile enter/exit)
+    // 2. Verify layout fits inside viewport without clipping or overlap across 5 required viewports
+    const viewports = [
+      { width: 1440, height: 900 },
+      { width: 1280, height: 720 },
+      { width: 1024, height: 768 },
+      { width: 390, height: 844 },
+      { width: 360, height: 640 },
+    ];
+
+    for (const vp of viewports) {
+      await page.setViewportSize(vp);
+      await page.goto('/about');
+
+      const panel = page.getByTestId('scroll-scrub-panel');
+      const statement = page.getByTestId('name-scene-statement');
+      await expect(panel).toBeVisible();
+      await expect(statement).toBeVisible();
+
+      const panelBox = await panel.boundingBox();
+      const statementBox = await statement.boundingBox();
+      expect(panelBox).not.toBeNull();
+      expect(statementBox).not.toBeNull();
+
+      // Panel is above statement with zero overlap and centered horizontally within 4px
+      expect(panelBox!.y + panelBox!.height).toBeLessThanOrEqual(statementBox!.y + 1);
+      const panelCenterX = panelBox!.x + panelBox!.width / 2;
+      const statementCenterX = statementBox!.x + statementBox!.width / 2;
+      expect(Math.abs(panelCenterX - statementCenterX)).toBeLessThanOrEqual(4);
+
+      // Entire combined height of panel + gap + statement fits inside viewport height
+      const combinedHeight = statementBox!.y + statementBox!.height - panelBox!.y;
+      expect(
+        combinedHeight,
+        `Combined panel+statement height at ${vp.width}x${vp.height}`,
+      ).toBeLessThanOrEqual(vp.height);
+    }
+
+    // 3. Verify pinned scroll-scrub and word-by-word lighting at 1440x900 and 390x844
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 844 });
       await page.goto('/about');
 
-      const panel = page.getByTestId('scroll-scrub-panel');
-      const canvas = page.getByTestId('scroll-scrub-canvas');
-      await expect(panel).toBeVisible();
-      await expect(canvas).toBeVisible();
-
-      const box = await panel.boundingBox();
-      expect(box?.width ?? 0).toBeGreaterThan(150);
-      expect(box?.height ?? 0).toBeGreaterThan(260);
-      const ratio = (box?.width ?? 1) / (box?.height ?? 1);
-      expect(ratio).toBeCloseTo(9 / 16, 1);
-
-      // Wait until at least the first & stride frames have loaded and drawn at scroll=0
+      // Wait until initial frame is drawn
       await page.waitForFunction(() => {
         const c = document.querySelector<HTMLCanvasElement>(
           '[data-testid="scroll-scrub-canvas"]',
@@ -193,7 +228,6 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
           const ctx = c.getContext('2d');
           if (!ctx) return 'no-ctx';
           const data = ctx.getImageData(0, 0, c.width, c.height).data;
-          // Sample every 97th byte to compute a fast deterministic checksum of the drawn pixels
           let hash = 2166136261;
           for (let i = 0; i < data.length; i += 97) {
             hash ^= data[i]!;
@@ -202,7 +236,7 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
           return `${hash >>> 0}`;
         });
 
-      // Scroll to top of #the-name (progress = 0) and wait for lerp to settle at 0.0000
+      // Scroll to top (before pinned scene starts: progress = 0)
       await page.evaluate(() => {
         window.scrollTo(0, 0);
         window.dispatchEvent(new Event('scroll'));
@@ -214,16 +248,17 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
         return c?.dataset.currentFrame === '0' && c?.dataset.scrubProgress === '0.0000';
       });
       const hashStart = await getCanvasHash();
+      const litAtStart = await page
+        .locator('[data-testid="name-statement-word"][data-lit="true"]')
+        .count();
+      expect(litAtStart).toBe(0);
 
-      // Scroll through #the-name so progress advances to the end of the section (progress = 1)
+      // Scroll past the pinned NameScene into #the-founder (progress = 1)
       await page.evaluate(() => {
-        const sec = document.getElementById('the-name');
-        const panelEl = document.querySelector<HTMLElement>('[data-testid="scroll-scrub-panel"]');
-        const target = window.innerWidth >= 1024 ? sec : panelEl;
-        if (target) {
-          const rect = target.getBoundingClientRect();
-          const targetY = window.scrollY + rect.bottom + 120;
-          window.scrollTo(0, targetY);
+        const founderEl = document.getElementById('the-founder');
+        if (founderEl) {
+          const rect = founderEl.getBoundingClientRect();
+          window.scrollTo(0, window.scrollY + rect.top + 80);
           window.dispatchEvent(new Event('scroll'));
         }
       });
@@ -233,12 +268,22 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
         );
         return Number(c?.dataset.currentFrame ?? '0') > 100 && c?.dataset.scrubProgress === '1.0000';
       });
-      const hashScrolled = await getCanvasHash();
-      expect(hashScrolled, `Canvas pixels should change on scroll at ${width}px`).not.toBe(
-        hashStart,
-      );
+      const hashEnd = await getCanvasHash();
+      expect(hashEnd, `Canvas pixels should advance at ${width}px`).not.toBe(hashStart);
 
-      // Scroll back up to top (progress = 0) and verify canvas rewinds to match the initial state
+      // 100% of statement words including the final word "Lord." are lit
+      const totalWords = await page.locator('[data-testid="name-statement-word"]').count();
+      const litAtEnd = await page
+        .locator('[data-testid="name-statement-word"][data-lit="true"]')
+        .count();
+      expect(totalWords).toBeGreaterThan(10);
+      expect(litAtEnd).toBe(totalWords);
+
+      const lastWord = page.locator('[data-testid="name-statement-word"]').last();
+      await expect(lastWord).toHaveText('Lord.');
+      await expect(lastWord).toHaveAttribute('data-lit', 'true');
+
+      // Rewind to top (progress = 0) and confirm canvas and words reset cleanly
       await page.evaluate(() => {
         window.scrollTo(0, 0);
         window.dispatchEvent(new Event('scroll'));
@@ -250,9 +295,11 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
         return c?.dataset.currentFrame === '0' && c?.dataset.scrubProgress === '0.0000';
       });
       const hashRewound = await getCanvasHash();
-      expect(hashRewound, `Canvas pixels should match start after rewind at ${width}px`).toBe(
-        hashStart,
-      );
+      expect(hashRewound).toBe(hashStart);
+      const litAfterRewind = await page
+        .locator('[data-testid="name-statement-word"][data-lit="true"]')
+        .count();
+      expect(litAfterRewind).toBe(0);
     }
   });
 });

@@ -279,7 +279,19 @@ export function ServiceSection({ service }: ServiceSectionProps) {
                     <h3 className="font-sans text-lg font-medium text-ink group-hover:text-line-accent">
                       {project.title}
                     </h3>
-                    <span className="text-label-mono text-ink-muted">{project.year}</span>
+                    {project.kind === 'real' ? (
+                      <span
+                        data-testid="live-site-badge"
+                        className="text-label-mono inline-flex shrink-0 items-center gap-1.5 rounded-pill border border-line px-2 py-0.5 text-ink"
+                      >
+                        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+                        <span>LIVE SITE</span>
+                      </span>
+                    ) : (
+                      project.year && (
+                        <span className="text-label-mono text-ink-muted">{project.year}</span>
+                      )
+                    )}
                   </div>
                   <p className="text-body text-ink-muted">{project.summary}</p>
                   <div className="pt-1">
