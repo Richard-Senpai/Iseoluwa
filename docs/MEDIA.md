@@ -64,3 +64,35 @@ To add or replace a team portrait:
 2. Adjust the member's `focalPoint` in `scripts/team-images.mjs` and `src/content/team.ts` if needed.
 3. Run `pnpm team:images` to regenerate the 4:5 cropped WebP and AVIF files (`1600×2000` and `800×1000`, capped at source resolution without upscaling) and update the base64 blur placeholders in `src/content/team-blur.ts`.
 
+---
+
+## 5. Name Section Scroll-Scrub Media (`public/media/scrub/name-section/` & `pnpm media:scrub`)
+
+- **Original Video Location**: `assets/originals/name-section-source.mp4` (`19.22 MB`, `720×1280`, `19.970s @ 24 fps`, `h264`, audio track stripped during processing; never placed in `public/`).
+- **Generated Output (`public/media/scrub/name-section/`)**:
+  - `desktop/frame_0001.webp` .. `frame_0190.webp`: 190 frames (`720×1280`, WebP q=78) — **3.35 MB** (`3,516,092 bytes`, within the 8 MB budget).
+  - `mobile/frame_0001.webp` .. `frame_0190.webp`: 190 frames (`720×1280`, WebP q=74) — **2.99 MB** (`3,139,984 bytes`, within the 5 MB budget).
+  - `poster-first.webp` & `poster-last.webp`: Instant first-frame and reduced-motion/no-JS finished-frame posters.
+  - `manifest.json`: Frame counts, dimensions, URL patterns, aspect ratio (`9 / 16`), corner-sampled background colour (`#101010`), and 20 px base64 `blurDataURL`.
+- **Review Files**:
+  - `docs/media-review/name-section-contact-sheet.jpg` (24 evenly spaced frames across the sequence)
+  - `docs/media-review/name-section-report.md` (inspection details, cut analysis, and weights)
+
+### Re-Running with Different `--start`, `--end`, or `--frames` Values
+```bash
+# Default run (full 0.00s – 19.97s range, 190 frames):
+pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/media/scrub/name-section
+
+# Example: Scrub only the first transformation (0.00s to 5.20s, black -> smooth white "i"):
+pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/media/scrub/name-section --start 0 --end 5.2 --frames 120
+
+# Example: Scrub the second transformation (5.20s to 19.97s, white -> sculpted stone "i"):
+pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/media/scrub/name-section --start 5.2 --end 19.97 --frames 160
+```
+
+### Replacing the Animation with a New Video Later
+1. Replace `assets/originals/name-section-source.mp4` with the new source video file.
+2. Run `pnpm media:scrub --input assets/originals/name-section-source.mp4 --out public/media/scrub/name-section`.
+3. If the subject changed, update `ABOUT_CONTENT.nameSectionMedia.alt` in `src/features/about/about.content.ts`.
+
+

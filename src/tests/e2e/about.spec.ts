@@ -130,13 +130,129 @@ test.describe('About Page (/about) — Dynamic 4-Tile Founder & Team Section on 
     }
   });
 
-  test('reduced motion keeps all four member tiles visible and unpinned', async ({ page }) => {
+  test('reduced motion keeps all four member tiles visible and unpinned, and shows static poster-last image in The Name section', async ({
+    page,
+  }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/about');
 
     for (const id of ['iseoluwa', 'daniel', 'maleek', 'jessica']) {
       await expect(page.getByTestId(`team-member-card-${id}`)).toBeVisible();
+    }
+
+    const poster = page.getByTestId('scroll-scrub-poster');
+    await expect(poster).toBeVisible();
+    await expect(poster).toHaveAttribute('src', '/media/scrub/name-section/poster-last.webp');
+    await expect(page.getByTestId('scroll-scrub-canvas')).toHaveCount(0);
+  });
+
+  test('ScrollScrubMedia in 01 / THE NAME loads manifest & posters, renders 9:16 canvas at 1440 and 390 px, and scrubs canvas pixels forward and backward cleanly', async ({
+    page,
+  }) => {
+    // 1. Verify manifest and posters load with HTTP 200
+    for (const assetUrl of [
+      '/media/scrub/name-section/manifest.json',
+      '/media/scrub/name-section/poster-first.webp',
+      '/media/scrub/name-section/poster-last.webp',
+    ]) {
+      const res = await page.request.get(assetUrl);
+      expect(res.status(), `GET ${assetUrl}`).toBe(200);
+    }
+
+    // 2. Test at both 1440px (desktop sticky) and 390px (mobile enter/exit)
+    for (const width of [1440, 390]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/about');
+
+      const panel = page.getByTestId('scroll-scrub-panel');
+      const canvas = page.getByTestId('scroll-scrub-canvas');
+      await expect(panel).toBeVisible();
+      await expect(canvas).toBeVisible();
+
+      const box = await panel.boundingBox();
+      expect(box?.width ?? 0).toBeGreaterThan(150);
+      expect(box?.height ?? 0).toBeGreaterThan(260);
+      const ratio = (box?.width ?? 1) / (box?.height ?? 1);
+      expect(ratio).toBeCloseTo(9 / 16, 1);
+
+      // Wait until at least the first & stride frames have loaded and drawn at scroll=0
+      await page.waitForFunction(() => {
+        const c = document.querySelector<HTMLCanvasElement>(
+          '[data-testid="scroll-scrub-canvas"]',
+        );
+        return Boolean(c && c.dataset.currentFrame !== undefined);
+      });
+
+      const getCanvasHash = async () =>
+        page.evaluate(() => {
+          const c = document.querySelector<HTMLCanvasElement>(
+            '[data-testid="scroll-scrub-canvas"]',
+          );
+          if (!c) return 'no-canvas';
+          const ctx = c.getContext('2d');
+          if (!ctx) return 'no-ctx';
+          const data = ctx.getImageData(0, 0, c.width, c.height).data;
+          // Sample every 97th byte to compute a fast deterministic checksum of the drawn pixels
+          let hash = 2166136261;
+          for (let i = 0; i < data.length; i += 97) {
+            hash ^= data[i]!;
+            hash = Math.imul(hash, 16777619);
+          }
+          return `${hash >>> 0}`;
+        });
+
+      // Scroll to top of #the-name (progress = 0) and wait for lerp to settle at 0.0000
+      await page.evaluate(() => {
+        window.scrollTo(0, 0);
+        window.dispatchEvent(new Event('scroll'));
+      });
+      await page.waitForFunction(() => {
+        const c = document.querySelector<HTMLCanvasElement>(
+          '[data-testid="scroll-scrub-canvas"]',
+        );
+        return c?.dataset.currentFrame === '0' && c?.dataset.scrubProgress === '0.0000';
+      });
+      const hashStart = await getCanvasHash();
+
+      // Scroll through #the-name so progress advances to the end of the section (progress = 1)
+      await page.evaluate(() => {
+        const sec = document.getElementById('the-name');
+        const panelEl = document.querySelector<HTMLElement>('[data-testid="scroll-scrub-panel"]');
+        const target = window.innerWidth >= 1024 ? sec : panelEl;
+        if (target) {
+          const rect = target.getBoundingClientRect();
+          const targetY = window.scrollY + rect.bottom + 120;
+          window.scrollTo(0, targetY);
+          window.dispatchEvent(new Event('scroll'));
+        }
+      });
+      await page.waitForFunction(() => {
+        const c = document.querySelector<HTMLCanvasElement>(
+          '[data-testid="scroll-scrub-canvas"]',
+        );
+        return Number(c?.dataset.currentFrame ?? '0') > 100 && c?.dataset.scrubProgress === '1.0000';
+      });
+      const hashScrolled = await getCanvasHash();
+      expect(hashScrolled, `Canvas pixels should change on scroll at ${width}px`).not.toBe(
+        hashStart,
+      );
+
+      // Scroll back up to top (progress = 0) and verify canvas rewinds to match the initial state
+      await page.evaluate(() => {
+        window.scrollTo(0, 0);
+        window.dispatchEvent(new Event('scroll'));
+      });
+      await page.waitForFunction(() => {
+        const c = document.querySelector<HTMLCanvasElement>(
+          '[data-testid="scroll-scrub-canvas"]',
+        );
+        return c?.dataset.currentFrame === '0' && c?.dataset.scrubProgress === '0.0000';
+      });
+      const hashRewound = await getCanvasHash();
+      expect(hashRewound, `Canvas pixels should match start after rewind at ${width}px`).toBe(
+        hashStart,
+      );
     }
   });
 });

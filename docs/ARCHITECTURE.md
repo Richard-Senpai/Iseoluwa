@@ -200,5 +200,18 @@ To enable Aeonik in production:
   - `ServicesHero.tsx`, `ServicesStickyNav.tsx`, `ServiceSection.tsx` (reusable across all 3 services with desktop cursor-following preview frame from concept project media and keyboard/touch accordion), `ServicesProcess.tsx`, `ServicesPackages.tsx` (equal `minmax(0, 1fr)` columns, container-query `<PackagePrice />`, desktop sticky comparison table + mobile per-package accordion, add-ons, terms, and shared `<PackageMatcher />`), and `ServicesFaq.tsx`.
 - **SEO**: `buildServicesJsonLd()` (`Service` x3), `buildPackagesOfferCatalogJsonLd()` (`OfferCatalog`), `buildFaqPageJsonLd()` (`FAQPage`), and `buildBreadcrumbJsonLd()` (`BreadcrumbList`) in `src/lib/seo.ts`.
 
+---
+
+## 9. Scroll-Scrub Image Sequence (`ScrollScrubMedia.tsx` & `pnpm media:scrub`)
+
+- **Processing Pipeline (`scripts/process-scrub-media.mjs`)**:
+  - Uses `ffprobe-static`, `ffmpeg-static`, and `sharp` to inspect source videos in `assets/originals/`, detect letterbox/pillarbox borders (`cropdetect`) and hard scene cuts (`select='gt(scene,0.3)'`), strip audio, and extract evenly spaced WebP frame sets for desktop (`<= 1080px`, q=78, budget `<= 8 MB`) and mobile (`<= 720px`, q=74, budget `<= 5 MB`).
+  - Samples the 4 corners of the first frame to determine the exact background hex colour (`#101010`), generates `poster-first.webp`, `poster-last.webp`, and a 20 px `blurDataURL`, and writes `manifest.json` plus review artifacts in `docs/media-review/`.
+- **Runtime Component (`src/components/motion/ScrollScrubMedia.tsx`)**:
+  - Server-renders `poster-first.webp` (or `poster-last.webp` under `prefers-reduced-motion: reduce`) inside an `aspect-ratio`-locked frame with the sampled background colour so there is zero layout shift (CLS = 0).
+  - Progressively loads and decodes frames via `createImageBitmap` in stride order (`first`, `last`, every `8th`, `4th`, `2nd`, then remaining), selecting the mobile frame set on viewports `< 768px` or when `saveData` is enabled.
+  - Subscribes to the shared `gsap.ticker` while intersecting the viewport, smoothing scroll progress with a `0.12` lerp (`lerpScrollProgress`) and alpha-blending the two neighbouring frames (`mapProgressToFramePosition`) on a `<canvas>` (`devicePixelRatio` capped at 2, `imageSmoothingQuality = "high"`).
+
+
 
 

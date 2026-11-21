@@ -83,6 +83,12 @@ export const ABOUT_CONTENT = {
     pronunciation: '[Pronunciation: ee-sheh-oh-loo-wah]',
   },
 
+  nameSectionMedia: {
+    manifestUrl: '/media/scrub/name-section/manifest.json',
+    alt: 'An object gradually refined from rough stone into a smooth white form as you scroll',
+    caption: null as string | null,
+  },
+
   founderSection: {
     sectionLabel: '02 / THE FOUNDER',
     heading: `Meet ${SITE_CONTENT.founder.displayName}`,

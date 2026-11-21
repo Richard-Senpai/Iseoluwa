@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "concepts:export": "node scripts/export-concepts.mjs",
     "team:images": "node scripts/team-images.mjs",
+    "media:scrub": "node scripts/process-scrub-media.mjs",
     "prepare": "husky"
   },
   "lint-staged": {
@@ -49,6 +50,8 @@
     "autoprefixer": "^10.6.2",
     "eslint": "^9.39.5",
     "eslint-config-next": "^15.5.29",
+    "ffmpeg-static": "^5.3.0",
+    "ffprobe-static": "^3.1.0",
     "husky": "^9.1.7",
     "jsdom": "^31.0.0",
     "lint-staged": "^17.6.0",
@@ -59,5 +62,11 @@
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",
     "vitest": "^5.1.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "ffmpeg-static",
+      "sharp"
+    ]
   }
 }

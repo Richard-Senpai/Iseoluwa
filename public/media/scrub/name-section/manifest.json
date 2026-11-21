@@ -1,0 +1,27 @@
+{
+  "frameCount": 190,
+  "desktop": {
+    "width": 720,
+    "height": 1280,
+    "pattern": "/media/scrub/name-section/desktop/frame_%04d.webp",
+    "bytes": 3516092
+  },
+  "mobile": {
+    "width": 720,
+    "height": 1280,
+    "pattern": "/media/scrub/name-section/mobile/frame_%04d.webp",
+    "bytes": 3139984
+  },
+  "aspect": "9 / 16",
+  "durationSeconds": 19.97,
+  "range": {
+    "start": 0,
+    "end": 19.97
+  },
+  "sourceFps": 24,
+  "extractedFps": 9.51,
+  "background": "#101010",
+  "blurDataURL": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwBACdASoUACQAPtFUokuoJKMhqq35ABoJaQAAPY+rUe3+eon5DFIgyqkUxZGgAP72gg2H2wqKCFi4KKSfp4ds+7C+zC0+MZJcHTcvUywWD/x4LkTu+B8gAAA=",
+  "posterFirst": "/media/scrub/name-section/poster-first.webp",
+  "posterLast": "/media/scrub/name-section/poster-last.webp"
+}
